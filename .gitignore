@@ -1,0 +1,11 @@
+# IDE configuration folders
+.idea/
+*.iml
+
+# Compiled Java bytecode
+*.class
+build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
