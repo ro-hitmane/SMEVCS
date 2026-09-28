@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,26 +34,7 @@
 <body>
 
   <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
-    <div class="container d-flex align-items-center justify-content-between">
-
-      <div class="logo">
-        <h1><a href="index.jsp"><span>Charge it</span></a></h1>
-      </div>
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto active" href="UserHome.jsp">Home</a></li>
-         <li><a class="nav-link scrollto" href="Search.jsp">Search Charging Points</a></li>
-          <li><a class="nav-link scrollto" href="Pay.jsp">Pay Amount</a></li>
-        <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-      <!-- End navbar -->
-    </div>
-  </header>
-  <!-- End Header -->
+<jsp:include page="nav_user.jsp" />
 
   <!-- ======= Hero Section ======= -->
   <%
@@ -96,17 +78,8 @@
   </section>
   <!-- End Hero -->
 
-  <footer id="footer">
-    
-
-    <div class="container">
-      <div class="copyright">
-        &copy; Copyright <strong><span>Charge it 2021</span></strong>. All Rights Reserved
-      </div>
-      
-    </div>
-  </footer>
-  <!-- End Footer -->
+  <!-- ======= Footer ======= -->
+  <jsp:include page="footer_user.jsp" />
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
   <div id="preloader"></div>
