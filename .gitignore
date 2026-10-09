@@ -9,3 +9,17 @@ build/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Gradle generated files
+
+.gradle/
+build/
+**/build/
+
+# Eclipse files
+
+.metadata/
+.settings/
+.classpath
+.project
+
