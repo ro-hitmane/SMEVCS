@@ -121,6 +121,9 @@
     if (select('#navbar').classList.contains('navbar-mobile')) {
       e.preventDefault()
       this.nextElementSibling.classList.toggle('dropdown-active')
+    } else if (this.getAttribute('href') === '#') {
+      // Desktop: the Login button only opens the menu, it does not navigate
+      e.preventDefault()
     }
   }, true)
 

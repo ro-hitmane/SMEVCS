@@ -1609,3 +1609,63 @@ section {
     font-size: 24px;
   }
 }
+/* Single Login button with Admin / User dropdown */
+.navbar .login-dropdown > a.login-btn {
+  margin-left: 30px;
+  padding: 8px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50px;
+  color: #fff;
+  justify-content: center;
+  gap: 4px;
+}
+.navbar .login-dropdown > a.login-btn:before {
+  display: none;
+}
+.navbar .login-dropdown > a.login-btn:hover,
+.navbar .login-dropdown:hover > a.login-btn,
+.navbar .login-dropdown > a.login-btn.active {
+  background: #1acc8d;
+  border-color: #1acc8d;
+  color: #fff;
+}
+.navbar .login-dropdown > a.login-btn i {
+  margin-left: 4px;
+  font-size: 12px;
+}
+.navbar .login-dropdown > ul {
+  left: auto;
+  right: 0;
+}
+.navbar .login-dropdown > ul li {
+  min-width: 170px;
+}
+.navbar .login-dropdown:focus-within > ul {
+  opacity: 1;
+  top: 100%;
+  visibility: visible;
+}
+.navbar .login-dropdown > ul a {
+  justify-content: flex-start;
+}
+.navbar .login-dropdown > ul a i {
+  font-size: 15px;
+  margin-left: 0;
+}
+.navbar .login-dropdown > ul a.active {
+  color: #1acc8d;
+}
+.navbar-mobile .login-dropdown > a.login-btn {
+  margin: 10px 20px;
+  justify-content: center;
+  color: #0205a1;
+  border-color: #0205a1;
+}
+.navbar-mobile .login-dropdown > a.login-btn:hover,
+.navbar-mobile .login-dropdown > a.login-btn.active {
+  color: #fff;
+}
+.navbar-mobile .login-dropdown > ul {
+  left: auto;
+  right: auto;
+}

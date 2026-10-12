@@ -26,7 +26,7 @@
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <!-- self CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/style.css?v=2" rel="stylesheet">
 
 </head>
 
@@ -45,8 +45,13 @@
           <li><a class="nav-link scrollto active" href="index.jsp">Home</a></li>
          <li><a class="nav-link scrollto " href="#about">About</a></li>
          <li><a class="nav-link scrollto " href="#contact">Contact Us</a></li>         
-          <li><a class="nav-link scrollto" href="AdminLogin.jsp">Admin Login</a></li>
-           <li><a class="nav-link scrollto" href="UserLogin.jsp">User Login</a></li>
+          <li class="dropdown login-dropdown">
+            <a class="nav-link login-btn" href="#" aria-haspopup="true"><span>Login</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li><a class="" href="AdminLogin.jsp"><i class="bi bi-shield-lock"></i>&nbsp; Admin</a></li>
+              <li><a class="" href="UserLogin.jsp"><i class="bi bi-person"></i>&nbsp; User</a></li>
+            </ul>
+          </li>
          <%--  <li><a class="nav-link scrollto" href="Chatbot.jsp">Chatbot</a></li>--%>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
@@ -248,7 +253,7 @@
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
   <!-- Self Main JS File -->
-  <script src="assets/js/main.js"></script>
+  <script src="assets/js/main.js?v=2"></script>
   <script src="assets/js/contact.js"></script>
 
 </body>
