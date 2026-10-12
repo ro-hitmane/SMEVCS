@@ -9,7 +9,7 @@ public class DBConnection {
     public static String DBName = "smevcs";
     public static String DBUSER = "root";
     public static String DBPASSWORD = "";
-    public static String DBPORT = "3307"; // change to 3306 if your MySQL uses the default port
+    public static String DBPORT = "3306"; // change to 3306 if your MySQL uses the default port
 
     private static void loadDriver() throws ClassNotFoundException {
         try {
