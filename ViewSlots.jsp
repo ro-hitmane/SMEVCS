@@ -47,7 +47,7 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
-        <h1><a href="index.jsp"><span>TATA Power</span></a></h1>
+        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
       </div>
 
       <nav id="navbar" class="navbar">
@@ -103,45 +103,66 @@
         <div class="row">
           <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
 
-            <form action="ManageSlotsController" method="post" role="form" class="email-form">
-             
-            
-                    <table class="table table-bordered" style="color:black">
-                    <tr class="danger" style="color:black">
-                     <th>ID</th>
-                    <th> Slot Name   </th>
-                     <th>Slot Address</th>
-                     <th>Area</th>
-                     <th>City</th>
-                    <th>State</th>
-                    <th>Country</th>
-                     </tr>
-                     <%
-                     Connection con=DBConnection.getConnection();
-                     Statement st=con.createStatement();
-                     ResultSet rs=st.executeQuery("select * from tbl_slot");
-                     while(rs.next())
-                     {
-                    	 %>
-                    	 <TR>
-                    	 <td><%=rs.getString(1) %></td>
-                    	 <td><%=rs.getString(2) %></td>
-                    	 <td><%=rs.getString(3) %></td>
-                    	 <td><%=rs.getString(4) %></td>
-                    	 <td><%=rs.getString(5) %></td>
-                    	 <td><%=rs.getString(6) %></td>
-           <td><%=rs.getString(7) %></td>
-                    	
-                    	 </TR>
-                    	 
-                    <%} %> 
-                   
-                    </table>
-                    
-                            
-                 
-            
-            </form>
+           <div class="table-responsive">
+  <table class="table table-bordered" style="color:black">
+    <tr class="danger" style="color:black">
+      <th>ID</th>
+      <th>Station</th>
+      <th>Area</th>
+      <th>Slot Label</th>
+      <th>Vehicle Type</th>
+      <th>Charger Type</th>
+      <th>Status</th>
+    </tr>
+    <%
+    Connection con = DBConnection.getConnection();
+    if (con == null) {
+    %>
+      <tr><td colspan="7">Could not connect to the database.</td></tr>
+    <%
+    } else {
+      try {
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery(
+          "select sl.id, st.station_name, st.area, sl.slot_label, sl.vehicle_type, sl.charger_type, sl.status " +
+          "from tbl_slot sl join tbl_station st on st.id = sl.station_id " +
+          "order by st.station_name, sl.slot_label");
+        boolean any = false;
+        while (rs.next()) {
+          any = true;
+          String status = rs.getString("status");
+          String badge = "Available".equals(status) ? "bg-success" : "bg-warning text-dark";
+    %>
+          <tr>
+            <td><%= rs.getInt("id") %></td>
+            <td><%= rs.getString("station_name") %></td>
+            <td><%= rs.getString("area") %></td>
+            <td><%= rs.getString("slot_label") %></td>
+            <td><%= rs.getString("vehicle_type") %></td>
+            <td><%= rs.getString("charger_type") %></td>
+            <td><span class="badge <%= badge %>"><%= status %></span></td>
+          </tr>
+    <%
+        }
+        if (!any) {
+    %>
+          <tr><td colspan="7">No slots added yet.</td></tr>
+    <%
+        }
+        rs.close();
+        st.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+    %>
+        <tr><td colspan="7">Error loading slots. Check the server log.</td></tr>
+    <%
+      } finally {
+        try { con.close(); } catch (Exception ignored) {}
+      }
+    }
+    %>
+  </table>
+</div>
           </div>
         </div>
 
@@ -159,7 +180,7 @@
 
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>TATA Power 2021</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
       
     </div>

@@ -27,6 +27,80 @@
 
   <!-- self Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
+  <!-- Login-only extras; card, inputs and button styles come from style.css -->
+  <style>
+    .contact .login-form .login-badge {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 28px;
+      color: #3f43fd;
+      background: #f0f0ff;
+      box-shadow: 0 8px 18px rgba(63, 67, 253, 0.18);
+    }
+    .contact .login-form .input-wrap input[type=password],
+    .contact .login-form .input-wrap input[type=text] {
+      padding-right: 44px;
+    }
+    .contact .login-form .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 6px;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: #8f93c9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: color 0.25s ease, background 0.25s ease;
+    }
+    .contact .login-form .toggle-password i {
+      position: static;
+      transform: none;
+      color: inherit;
+      pointer-events: none;
+    }
+    .contact .login-form .toggle-password:hover {
+      color: #3f43fd;
+      background: #f0f0ff;
+    }
+    .contact .login-form .login-footer {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid #eceeff;
+      font-size: 14px;
+    }
+    .contact .login-form .login-footer a {
+      color: #6b6f9a;
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .contact .login-form .login-footer a:hover {
+      color: #3f43fd;
+    }
+  
+    .contact .login-form .login-footer .register-link {
+      color: #3f43fd;
+      font-weight: 600;
+    }
+    .contact .login-form .login-footer .register-link:hover {
+      color: #1acc8d;
+    }
+    .contact .login-form .login-footer p {
+      margin: 0 0 10px;
+      color: #6b6f9a;
+    }
+  </style>
 </head>
 
 <body>
@@ -41,7 +115,7 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+          <li><a class="nav-link scrollto active" href="index.jsp">Home</a></li>
          <li><a class="nav-link scrollto " href="#about">About</a></li>
          <li><a class="nav-link scrollto " href="#contact">Contact Us</a></li>         
           <li><a class="nav-link scrollto" href="AdminLogin.jsp">Admin Login</a></li>
@@ -91,28 +165,46 @@
           <p>User Login</p>
         </div>
 
-        <div class="row">
+        <div class="row justify-content-center">
+          <div class="col-lg-5 col-md-8 mt-5 mt-lg-0" data-aos="fade-up" data-aos-delay="200">
 
-         
+            <form action="UserLoginController" method="post" role="form" class="email-form login-form">
+              <div class="form-header text-center">
+                <div class="login-badge"><i class="bi bi-person-circle"></i></div>
+                <h3>Welcome back</h3>
+                <p>Log in to find charging slots and manage your bookings.</p>
+              </div>
 
-          <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrap">
+                  <i class="bi bi-envelope"></i>
+                  <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com" autocomplete="username" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Email-Id must be valid format." required="required">
+                </div>
+              </div>
 
-            <form action="UserLoginController" method="post" role="form">
-             
               <div class="form-group mt-3">
-                <input type="email" class="form-control" name="email" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Email-Id must be valid format." required="required">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                  <i class="bi bi-lock"></i>
+                  <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" autocomplete="current-password" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" title="Password must contain at least one number and one special character and one uppercase and lowercase letter, and at least 8 or more characters" required="required">
+                  <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
               </div>
-               <div class="form-group mt-3">
-                <input type="password" class="form-control" name="password" placeholder="Password" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" title="Password must contain at least one number and one special character and one uppercase and lowercase letter, and at least 8 or more characters" required="required">
+
+              <div class="text-center mt-4">
+                <button type="submit"><i class="bi bi-box-arrow-in-right"></i> Login</button>
               </div>
-             <br><br>
-             
-              <div class="text-center"><button type="submit">Login</button>&nbsp;&nbsp;&nbsp;<br><br>If you have new user <br><a href="UserRegister.jsp">click here?</a></div>
-              
+
+              <div class="login-footer text-center">
+                <p>New user? <a class="register-link" href="UserRegister.jsp">Create an account</a></p>
+                <a href="index.jsp"><i class="bi bi-arrow-left"></i> Back to home</a>
+              </div>
             </form>
 
           </div>
-
         </div>
 
       </div>
@@ -147,6 +239,8 @@
 
   <!-- self Main JS File -->
   <script src="assets/js/main.js"></script>
+
+
 
 </body>
 

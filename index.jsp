@@ -37,7 +37,7 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
-        <h1><a href="index.jsp"><span>TATA Power</span></a></h1>
+        <h1><a href="index.jsp"><span> Plugy</span></a></h1>
       </div>
 
       <nav id="navbar" class="navbar">
@@ -47,7 +47,7 @@
          <li><a class="nav-link scrollto " href="#contact">Contact Us</a></li>         
           <li><a class="nav-link scrollto" href="AdminLogin.jsp">Admin Login</a></li>
            <li><a class="nav-link scrollto" href="UserLogin.jsp">User Login</a></li>
-           <li><a class="nav-link scrollto" href="Chatbot.jsp">Chatbot</a></li>
+         <%--  <li><a class="nav-link scrollto" href="Chatbot.jsp">Chatbot</a></li>--%>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
@@ -63,7 +63,7 @@
       <div class="row justify-content-between">
         <div class="col-lg-7 pt-5 pt-lg-0 order-2 order-lg-1 d-flex align-items-center">
           <div data-aos="zoom-out">
-            <h1>TATA Power Charging Station</h1>
+            <h1>Plugy Charging Station</h1>
           </div>
         </div>
         <div class="col-lg-4 order-1 order-lg-2 hero-img" data-aos="zoom-out" data-aos-delay="300">
@@ -168,27 +168,49 @@
 
           <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
 
-            <form action="#" method="post" role="form" class="email-form">
+            <form action="ContactController" method="post" role="form" class="email-form">
+              <!-- Honeypot field for spam bots: hidden from real users -->
+              <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
+              <div class="form-header">
+                <h3>Send us a message</h3>
+                <p>Fill in the form and we will get back to you shortly.</p>
+              </div>
               <div class="row">
                 <div class="col-md-6 form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required>
+                  <label for="name">Your Name</label>
+                  <div class="input-wrap">
+                    <i class="bi bi-person"></i>
+                    <input type="text" name="name" class="form-control" id="name" placeholder="John Doe" required>
+                  </div>
                 </div>
                 <div class="col-md-6 form-group mt-3 mt-md-0">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
+                  <label for="email">Your Email</label>
+                  <div class="input-wrap">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com" required>
+                  </div>
                 </div>
               </div>
               <div class="form-group mt-3">
-                <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
+                <label for="subject">Subject</label>
+                <div class="input-wrap">
+                  <i class="bi bi-chat-left-text"></i>
+                  <input type="text" class="form-control" name="subject" id="subject" placeholder="How can we help?" required>
+                </div>
               </div>
               <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="5" placeholder="Message" required></textarea>
+                <label for="message">Message</label>
+                <div class="input-wrap textarea-wrap">
+                  <i class="bi bi-pencil-square"></i>
+                  <textarea class="form-control" name="message" id="message" rows="5" placeholder="Write your message here..." required></textarea>
+                </div>
               </div>
               <div class="my-3">
                 <div class="loading">Loading</div>
                 <div class="error-message"></div>
                 <div class="sent-message">Your message has been sent. Thank you!</div>
               </div>
-              <div class="text-center"><button type="submit">Send Message</button></div>
+              <div class="text-center"><button type="submit"><i class="bi bi-send"></i> Send Message</button></div>
             </form>
 
           </div>
@@ -208,7 +230,7 @@
 
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>TATA Power 2021</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
       
     </div>
@@ -227,6 +249,7 @@
 
   <!-- Self Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/contact.js"></script>
 
 </body>
 

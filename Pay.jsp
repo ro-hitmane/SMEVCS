@@ -142,7 +142,7 @@
 
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>Charge it 2021</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
       
     </div>

@@ -47,7 +47,7 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
-        <h1><a href="index.jsp"><span>TATA Power</span></a></h1>
+        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
       </div>
 
       <nav id="navbar" class="navbar">
@@ -158,7 +158,7 @@
 
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>TATA Power 2021</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
       
     </div>

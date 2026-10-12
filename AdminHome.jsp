@@ -37,17 +37,18 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
-        <h1><a href="index.jsp"><span>TATA Power</span></a></h1>
+        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
       </div>
 
-      <nav id="navbar" class="navbar">
+      <nav id="navbar" class="navbar admin-nav">
         <ul>
-          <li><a class="nav-link scrollto active" href="AdminHome.jsp">Home</a></li>        
-          <li><a class="nav-link scrollto" href="ManageSlots.jsp">Manage Charging Slots</a></li>
-           <li><a class="nav-link scrollto" href="ViewSlots.jsp">View Slots</a></li>
-           <li><a class="nav-link scrollto" href="BookingHistory.jsp">View Booking History</a></li>
-             <li><a class="nav-link scrollto" href="PaymentHistory.jsp">View Payment History</a></li>
-             <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
+          <li><a class="nav-link scrollto active" href="AdminHome.jsp">Home</a></li>
+          <li><a class="nav-link scrollto" href="ManageSlots.jsp">Manage Slots</a></li>
+          <li><a class="nav-link scrollto" href="ViewSlots.jsp">View Slots</a></li>
+          <li><a class="nav-link scrollto" href="BookingHistory.jsp">Bookings</a></li>
+          <li><a class="nav-link scrollto" href="PaymentHistory.jsp">Payments</a></li>
+          <li><a class="nav-link scrollto" href="ContactQueries.jsp">Queries</a></li>
+          <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
@@ -63,7 +64,7 @@
       <div class="row justify-content-between">
         <div class="col-lg-7 pt-5 pt-lg-0 order-2 order-lg-1 d-flex align-items-center">
           <div data-aos="zoom-out">
-            <h1>TATA Power Charging Station</h1>
+            <h1>Plugy Charging Station</h1>
           </div>
         </div>
         <div class="col-lg-4 order-1 order-lg-2 hero-img" data-aos="zoom-out" data-aos-delay="300">
@@ -109,7 +110,7 @@
 
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>TATA Power 2021</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Plugy 2021</span></strong>. All Rights Reserved
       </div>
       
     </div>

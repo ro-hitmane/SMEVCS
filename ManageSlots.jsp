@@ -1,5 +1,12 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List, com.bean.Station, com.dao.AdminDao" %>
+<%
+    List<Station> stations = new AdminDao().getStations();
+%>
+
 <!DOCTYPE html>
 <html lang="en">
+
 
 <head>
   <meta charset="utf-8">
@@ -43,7 +50,7 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
-        <h1><a href="index.jsp"><span>TATA Power</span></a></h1>
+        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
       </div>
 
       <nav id="navbar" class="navbar">
@@ -99,34 +106,50 @@
         <div class="row">
           <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
 
-            <form action="ManageSlotsController" method="post" role="form" class="email-form">
-             
-              <div class="form-group mt-3">
-                <input type="text" class="form-control" name="slotname" id="subject" placeholder="Slot Name" required>
-              </div>
-              
-              <div class="form-group mt-3">
-                <input type="text" class="form-control" name="slotaddress" id="subject" placeholder="Slot Address" required>
-              </div>
-              
-               <div class="form-group mt-3">
-                <input type="text" class="form-control" name="slotarea" id="subject" placeholder="Slot Area" required>
-              </div>
-              
-               <div class="form-group mt-3">
-                <input type="text" class="form-control" name="city" id="subject" placeholder="City" required>
-              </div>
-              
-               <div class="form-group mt-3">
-                <input type="text" class="form-control" name="state" id="subject" placeholder="State" required>
-              </div>
-               
-               <div class="form-group mt-3">
-                <input type="text" class="form-control" name="country" id="subject" placeholder="Country" required>
-              </div>
-             <br><br>
-             <div class="text-center"><button type="submit">Add Slots</button></div>
-            </form>
+           <form action="ManageSlotsController" method="post" role="form" class="email-form">
+
+  <div class="form-group mt-3">
+    <select class="form-control" name="stationId" required>
+      <option value="">Select charging station</option>
+      <% for (Station s : stations) { %>
+        <option value="<%= s.getId() %>"><%= s.getStationName() %> (<%= s.getArea() %>)</option>
+      <% } %>
+    </select>
+  </div>
+
+  <div class="form-group mt-3">
+    <input type="text" class="form-control" name="slotLabel" placeholder="Slot label, e.g. Bay 1" required>
+  </div>
+
+  <div class="form-group mt-3">
+    <select class="form-control" name="vehicleType" required>
+      <option value="">Select vehicle type</option>
+      <option>2-Wheeler</option>
+      <option>4-Wheeler-Normal</option>
+      <option>4-Wheeler-Fast</option>
+    </select>
+  </div>
+
+  <div class="form-group mt-3">
+    <select class="form-control" name="chargerType" required>
+      <option value="">Select charger type</option>
+      <option>CCS2</option>
+      <option>CHAdeMO</option>
+      <option>GB/T</option>
+    </select>
+  </div>
+
+  <div class="form-group mt-3">
+    <select class="form-control" name="status" required>
+      <option>Available</option>
+      <option>Reserved</option>
+    </select>
+  </div>
+
+  <br><br>
+  <div class="text-center"><button type="submit">Add Slot</button></div>
+</form>
+           
           </div>
         </div>
 
@@ -144,7 +167,7 @@
 
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>TATA Power 2021</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
       
     </div>
