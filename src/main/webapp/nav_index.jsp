@@ -53,3 +53,5 @@ String pageName = uri.substring(uri.lastIndexOf("/") + 1);
 </nav>
 </div>
   </header>
+  
+  <jsp:include page="chatbot_widget.jsp" />

@@ -19,5 +19,7 @@
       <i class="bi bi-list mobile-nav-toggle"></i>
     </nav>
   </div>
-</header>
+</header> 
 <!-- End Header -->
+
+<jsp:include page="chatbot_widget.jsp" />

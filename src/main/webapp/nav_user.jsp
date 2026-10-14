@@ -23,3 +23,5 @@
   </div>
 </header>
 <!-- End Header -->
+
+<jsp:include page="chatbot_widget.jsp" />
