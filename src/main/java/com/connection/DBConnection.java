@@ -9,14 +9,12 @@ public class DBConnection {
     public static String DBName = "smevcs";
     public static String DBUSER = "root";
     public static String DBPASSWORD = "";
-    public static String DBPORT = "3307"; // change to 3306 if your MySQL uses the default port
+    public static String DBPORT = "3306"; // change to 3307 if your XAMPP MySQL port is modified
 
     private static void loadDriver() throws ClassNotFoundException {
         try {
-            // Connector/J 8 and newer
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            // Connector/J 5.x
             Class.forName("com.mysql.jdbc.Driver");
         }
     }
@@ -25,11 +23,10 @@ public class DBConnection {
         try {
             loadDriver();
 
-            String url = "jdbc:mysql://localhost:" + DBPORT + "/" + DBName
-                    + "?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+            String url = "jdbc:mysql://127.0.0.1:" + DBPORT + "/" + DBName
+                    + "?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true";
 
             Connection con = DriverManager.getConnection(url, DBUSER, DBPASSWORD);
-            System.out.println("Database connected successfully!");
             return con;
 
         } catch (ClassNotFoundException e) {

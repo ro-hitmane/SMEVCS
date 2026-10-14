@@ -27,7 +27,7 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css?v=2" rel="stylesheet">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <!-- =======================================================
   * Template Name: Bootslander - v4.7.0
   * Template URL: https://bootstrapmade.com/bootslander-free-bootstrap-landing-page-template/
@@ -102,30 +102,7 @@
 
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
-    <div class="container d-flex align-items-center justify-content-between">
-
-      <div class="logo">
-        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
-      </div>
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto " href="index.jsp">Home</a></li>         
-          <li class="dropdown login-dropdown">
-            <a class="nav-link login-btn active" href="#" aria-haspopup="true"><span>Login</span> <i class="bi bi-chevron-down"></i></a>
-            <ul>
-              <li><a class="active" href="AdminLogin.jsp"><i class="bi bi-shield-lock"></i>&nbsp; Admin</a></li>
-              <li><a class="" href="UserLogin.jsp"><i class="bi bi-person"></i>&nbsp; User</a></li>
-            </ul>
-          </li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-      <!-- .navbar -->
-    </div>
-  </header><!-- End Header -->
+    <jsp:include page="nav_index.jsp" />
 
   <!-- ======= Hero Section ======= -->
   <section id="hero">

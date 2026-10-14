@@ -1,8 +1,8 @@
-<!DOCTYPE html>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.PreparedStatement"%>
-<%@page import="com.connection.DBConnection"%>
-<%@page import="java.sql.Connection"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.ResultSet"%>
+<%@ page import="java.sql.PreparedStatement"%>
+<%@ page import="com.connection.DBConnection"%>
+<%@ page import="java.sql.Connection"%>
 <%!
     private static String esc(String v) {
         if (v == null) return "";
@@ -13,19 +13,20 @@
         if (st == null) return "status-other";
         String v = st.trim().toLowerCase();
         if (v.equals("available")) return "status-available";
-        if (v.equals("reserved")) return "status-reserved";
+        if (v.equals("reserved") || v.equals("occupied")) return "status-reserved";
         if (v.equals("offline")) return "status-offline";
         if (v.contains("maint")) return "status-maintenance";
         return "status-other";
     }
 %>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>SMEVCS</title>
+  <title>Plugy - View Slots</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -45,47 +46,19 @@
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-  <!-- Template Main CSS File -->
+  <!-- Main CSS File -->
   <link href="assets/css/style.css?v=6" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: Bootslander - v4.7.0
-  * Template URL: https://bootstrapmade.com/bootslander-free-bootstrap-landing-page-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
-    <div class="container d-flex align-items-center justify-content-between">
-
-      <div class="logo">
-        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
-      </div>
-
-      <nav id="navbar" class="navbar">
-         <ul>
-          <li><a class="nav-link scrollto" href="AdminHome.jsp">Home</a></li>
-          <li><a class="nav-link scrollto active" href="Stations.jsp">Station</a></li>
-          <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-      <!-- .navbar -->
-    </div>
-  </header><!-- End Header -->
+<jsp:include page="nav_admin.jsp" />
 
   <!-- ======= Hero Section ======= -->
   <section id="hero">
+    <div class="container"></div>
 
-    <div class="container">
-      
-    </div>
-
-    <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28 " preserveAspectRatio="none">
+    <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none">
       <defs>
         <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z">
       </defs>
@@ -99,12 +72,11 @@
         <use xlink:href="#wave-path" x="50" y="9" fill="#fff">
       </g>
     </svg>
-
   </section><!-- End Hero -->
 
   <main id="main">
 
-    <!-- ======= Contact Section ======= -->
+    <!-- ======= Section ======= -->
     <section id="contact" class="contact">
       <div class="container">
 
@@ -112,7 +84,9 @@
           <h2>Slots</h2>
           <p>View Slots</p>
         </div>
-        <div class="mb-3"><a href="Stations.jsp" style="color:#01036f;font-weight:500;"><i class="bi bi-arrow-left"></i> Back to Stations</a></div>
+        <div class="mb-3">
+          <a href="Stations.jsp" style="color:#01036f;font-weight:500;"><i class="bi bi-arrow-left"></i> Back to Stations</a>
+        </div>
 
         <div class="slot-table-card">
           <div class="table-responsive">
@@ -139,17 +113,30 @@
       try {
         String stationParam = request.getParameter("stationId");
         boolean filtered = stationParam != null && stationParam.matches("\\d+");
-        String query = "select sl.id, st.station_name, st.area, sl.slot_label, sl.vehicle_type, sl.charger_type, sl.status " +
-          "from tbl_slot sl join tbl_station st on st.id = sl.station_id " +
-          (filtered ? "where st.id = ? " : "") +
-          "order by st.station_name, sl.slot_label";
+        String query = "SELECT sl.id, st.station_name, st.area, sl.slot_label, sl.vehicle_type, sl.charger_type, sl.status, " +
+                       "(SELECT COUNT(*) FROM tbl_payment p WHERE p.slot_id = sl.id AND p.start_time <= NOW() AND p.end_time > NOW()) AS active_now " +
+                       "FROM tbl_slot sl JOIN tbl_station st ON st.id = sl.station_id " +
+                       (filtered ? "WHERE st.id = ? " : "") +
+                       "ORDER BY st.station_name, sl.slot_label";
         PreparedStatement st = con.prepareStatement(query);
         if (filtered) st.setInt(1, Integer.parseInt(stationParam));
         ResultSet rs = st.executeQuery();
         int n = 0;
         while (rs.next()) {
           n++;
-          String status = rs.getString("status");
+          String baseStatus = rs.getString("status");
+          if (baseStatus == null || baseStatus.trim().isEmpty()) {
+              baseStatus = "Available";
+          }
+          int activeNow = rs.getInt("active_now");
+          String displayStatus;
+          if ("Offline".equalsIgnoreCase(baseStatus) || baseStatus.toLowerCase().contains("maint")) {
+              displayStatus = baseStatus;
+          } else if (activeNow > 0) {
+              displayStatus = "Reserved";
+          } else {
+              displayStatus = baseStatus;
+          }
     %>
                 <tr>
                   <td class="slot-num"><%= n %></td>
@@ -158,7 +145,7 @@
                   <td><%= esc(rs.getString("slot_label")) %></td>
                   <td><span class="chip chip-vehicle"><%= esc(rs.getString("vehicle_type")) %></span></td>
                   <td><span class="chip chip-charger"><i class="bi bi-plug"></i> <%= esc(rs.getString("charger_type")) %></span></td>
-                  <td><span class="status-pill <%= statusClass(status) %>"><i class="bi bi-circle-fill"></i> <%= esc(status) %></span></td>
+                  <td><span class="status-pill <%= statusClass(displayStatus) %>"><i class="bi bi-circle-fill"></i> <%= esc(displayStatus) %></span></td>
                 </tr>
     <%
         }
@@ -186,21 +173,16 @@
 
       </div>
     </section>
-    
-    <!-- End Section -->
 
   </main>
   <!-- End #main -->
 
   <!-- ======= Footer ======= -->
   <footer id="footer">
-    
-
     <div class="container">
       <div class="copyright">
         &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
-      
     </div>
   </footer>
   <!-- End Footer -->
@@ -215,9 +197,7 @@
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
-  <!-- self Main JS File -->
+  <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
-
 </body>
-
 </html>

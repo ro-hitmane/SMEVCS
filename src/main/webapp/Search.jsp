@@ -1,5 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, com.connection.DBConnection" %>
+<%
+    // Capture prefill parameters if user was redirected from preview mode
+    String prefillArea = request.getParameter("area");
+    String prefillVehicle = request.getParameter("vehicleType");
+    String prefillPort = request.getParameter("portType");
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -117,10 +123,10 @@
 
 <body>
 
-  <!-- navbar -->
+  <!-- Navigation -->
   <jsp:include page="nav_user.jsp" />
 
-  <!-- ======= Hero Section ======= -->
+  <!-- Hero Waves Section -->
   <section id="hero" style="padding: 60px 0 0 0;">
     <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
       <defs><path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></defs>
@@ -141,6 +147,17 @@
 
         <div class="row justify-content-center">
           <div class="col-lg-10">
+            
+            <% if (prefillArea != null && !prefillArea.trim().isEmpty()) { %>
+              <div class="alert alert-info border-0 shadow-sm py-3 px-4 mb-3 d-flex align-items-center rounded-4" style="background-color: #eff6ff; border: 1.5px solid #bfdbfe !important;">
+                <i class="bi bi-geo-alt-fill text-primary fs-4 me-3"></i>
+                <div>
+                  <strong class="text-dark">Station Pre-Selected</strong>
+                  <p class="mb-0 text-muted small">We prefilled your charging station and vehicle options from your preview selection. Choose duration and click <strong>Find Available Slots</strong>.</p>
+                </div>
+              </div>
+            <% } %>
+
             <div class="dashboard-card shadow">
               
               <!-- Booking Form -->
@@ -156,14 +173,13 @@
                     <div class="form-group mb-3">
                       <label class="custom-label">Select Charging Station / Location <span class="text-danger">*</span></label>
                       <select class="form-select custom-input" name="area" id="stationSelect" required>
-                        <option value="" disabled selected>Choose a verified charging station</option>
+                        <option value="" disabled <%= (prefillArea == null || prefillArea.isEmpty()) ? "selected" : "" %>>Choose a verified charging station</option>
                         <%
                            Connection conStation = null;
                            PreparedStatement psStation = null;
                            ResultSet rsStation = null;
                            try {
                                conStation = DBConnection.getConnection();
-                               // Prioritize Pune stations first, then PCMC, sorted A-Z within each group
                                String query = "SELECT id, station_name, area, city FROM tbl_station " +
                                               "ORDER BY CASE WHEN city = 'Pune' THEN 1 ELSE 2 END, station_name ASC";
                                psStation = conStation.prepareStatement(query);
@@ -178,26 +194,17 @@
                                    
                                    if (!cityName.equalsIgnoreCase(currentCity)) {
                                        if (hasGroup) {
-                        %>
-                                           </optgroup>
-                        <%
+                                           out.println("</optgroup>");
                                        }
                                        currentCity = cityName;
                                        hasGroup = true;
-                        %>
-                                       <optgroup label="── <%= currentCity.toUpperCase() %> STATIONS ──">
-                        <%
+                                       out.println("<optgroup label=\"── " + currentCity.toUpperCase() + " STATIONS ──\">");
                                    }
-                        %>
-                                   <option value="<%= areaName %>">
-                                     <%= stationName %> &mdash; <%= areaName %>
-                                   </option>
-                        <%
+                                   boolean isSelected = (prefillArea != null && prefillArea.equalsIgnoreCase(areaName));
+                                   out.println("<option value=\"" + areaName + "\"" + (isSelected ? " selected" : "") + ">" + stationName + " &mdash; " + areaName + "</option>");
                                }
                                if (hasGroup) {
-                        %>
-                                   </optgroup>
-                        <%
+                                   out.println("</optgroup>");
                                }
                            } catch (Exception e) {
                                e.printStackTrace();
@@ -213,19 +220,19 @@
                     <div class="form-group mb-3">
                       <label class="custom-label">Vehicle Type <span class="text-danger">*</span></label>
                       <select class="form-select custom-input" name="vehicleType" id="vehicleType" onchange="calculatePrice()" required>
-                        <option value="" disabled selected>Select EV Model / Type</option>
-                        <option value="2-Wheeler">2-Wheeler (Standard)</option>
-                        <option value="4-Wheeler-Normal">4-Wheeler (Normal AC)</option>
-                        <option value="4-Wheeler-Fast">4-Wheeler (Fast DC)</option>
+                        <option value="" disabled <%= (prefillVehicle == null || prefillVehicle.isEmpty()) ? "selected" : "" %>>Select EV Model / Type</option>
+                        <option value="2-Wheeler" <%= "2-Wheeler".equalsIgnoreCase(prefillVehicle) ? "selected" : "" %>>2-Wheeler (Standard)</option>
+                        <option value="4-Wheeler-Normal" <%= "4-Wheeler-Normal".equalsIgnoreCase(prefillVehicle) ? "selected" : "" %>>4-Wheeler (Normal AC)</option>
+                        <option value="4-Wheeler-Fast" <%= "4-Wheeler-Fast".equalsIgnoreCase(prefillVehicle) ? "selected" : "" %>>4-Wheeler (Fast DC)</option>
                       </select>
                     </div>
 
                     <div class="form-group mb-3">
                       <label class="custom-label">Charging Port Type <span class="text-danger">*</span></label>
                       <select class="form-select custom-input" name="portType" id="portType" onchange="calculatePrice()">
-                        <option value="CCS2">Type 2 / CCS2</option>
-                        <option value="CHAdeMO">CHAdeMO</option>
-                        <option value="GB/T">GB/T</option>
+                        <option value="CCS2" <%= "CCS2".equalsIgnoreCase(prefillPort) ? "selected" : "" %>>Type 2 / CCS2</option>
+                        <option value="CHAdeMO" <%= "CHAdeMO".equalsIgnoreCase(prefillPort) ? "selected" : "" %>>CHAdeMO</option>
+                        <option value="GB/T" <%= "GB/T".equalsIgnoreCase(prefillPort) ? "selected" : "" %>>GB/T</option>
                       </select>
                     </div>
 
@@ -304,6 +311,7 @@
     </section>
   </main>
 
+  <!-- Footer -->
   <jsp:include page="footer_user.jsp" />
 
   <!-- Vendor JS Files -->
@@ -335,7 +343,6 @@
         baseHourlyRate = 200.00;
       }
 
-      // 10% discount for GB/T ports if a vehicle is selected
       if (port === 'GB/T' && baseHourlyRate > 0) {
         baseHourlyRate = baseHourlyRate * 0.90;
       }
@@ -345,18 +352,15 @@
       const gst = subtotal * 0.18;
       const finalTotal = subtotal + gst;
 
-      // Update UI displays
       document.getElementById('baseRateDisplay').innerText = "₹" + baseHourlyRate.toFixed(2) + " / hr";
       document.getElementById('subtotalDisplay').innerText = "₹" + subtotal.toFixed(2);
       document.getElementById('gstDisplay').innerText = "₹" + gst.toFixed(2);
       document.getElementById('finalPayableDisplay').innerText = "₹" + finalTotal.toFixed(2);
       
-      // Update form values
       document.getElementById('visualAmount').value = finalTotal.toFixed(2);
       document.getElementById('hiddenAmount').value = finalTotal.toFixed(2);
     }
 
-    // Ensure price engine evaluates correctly to 0 on initial page load
     document.addEventListener("DOMContentLoaded", function() {
       calculatePrice();
     });

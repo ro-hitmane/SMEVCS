@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +6,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Plugy - EV Charging Network</title>
+  <title>&#9889; Plugy - EV Charging Network</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -31,33 +32,9 @@
 
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
-    <div class="container d-flex align-items-center justify-content-between">
 
-      <div class="logo">
-        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
-      </div>
+    <jsp:include page="nav_index.jsp" />
 
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto active" href="index.jsp">Home</a></li>
-          <li><a class="nav-link scrollto" href="#about">About</a></li>
-          <li><a class="nav-link scrollto" href="#contact">Contact Us</a></li>
-          <li class="dropdown login-dropdown">
-            <a class="nav-link login-btn" href="#" aria-haspopup="true"><span>Login</span> <i class="bi bi-chevron-down"></i></a>
-            <ul>
-              <li><a href="AdminLogin.jsp"><i class="bi bi-shield-lock"></i>&nbsp; Admin</a></li>
-              <li><a href="UserLogin.jsp"><i class="bi bi-person"></i>&nbsp; User</a></li>
-            </ul>
-          </li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-      <!-- End navbar -->
-    </div>
-  </header>
-  <!-- End Header -->
 
   <!-- ======= Hero Section ======= -->
   <section id="hero">

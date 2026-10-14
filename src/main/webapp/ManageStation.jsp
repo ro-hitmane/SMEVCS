@@ -2,17 +2,23 @@
 <%@ page import="java.util.List, com.bean.Station, com.bean.Slot, com.dao.AdminDao" %>
 <%
     int stationId = -1;
-    try { stationId = Integer.parseInt(request.getParameter("stationId")); } catch (Exception ignored) {}
+    try { 
+        stationId = Integer.parseInt(request.getParameter("stationId")); 
+    } catch (Exception ignored) {}
+    
     AdminDao dao = new AdminDao();
     Station station = stationId > 0 ? dao.getStationById(stationId) : null;
     if (station == null) {
         response.sendRedirect("Stations.jsp");
         return;
     }
+    
     List<Slot> slots = dao.getSlotsByStation(stationId);
     int availableCount = 0;
     for (Slot sl : slots) {
-        if ("Available".equals(sl.getStatus())) availableCount++;
+        if ("Available".equalsIgnoreCase(sl.getStatus())) {
+            availableCount++;
+        }
     }
     int otherCount = slots.size() - availableCount;
 %>
@@ -27,7 +33,7 @@
         if (st == null) return "status-other";
         String v = st.trim().toLowerCase();
         if (v.equals("available")) return "status-available";
-        if (v.equals("reserved")) return "status-reserved";
+        if (v.equals("reserved") || v.equals("occupied")) return "status-reserved";
         if (v.equals("offline")) return "status-offline";
         if (v.contains("maint")) return "status-maintenance";
         return "status-other";
@@ -36,14 +42,10 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
   <title>SMEVCS - Manage Station</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
 
   <!-- Favicons -->
   <link href="assets/img/apple-touch-icon.png" rel="icon">
@@ -61,62 +63,26 @@
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-  <!-- Template Main CSS File -->
+  <!-- Main CSS File -->
   <link href="assets/css/style.css?v=6" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: Bootslander - v4.7.0
-  * Template URL: https://bootstrapmade.com/bootslander-free-bootstrap-landing-page-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
-    <div class="container d-flex align-items-center justify-content-between">
+<jsp:include page="nav_admin.jsp" />
 
-      <div class="logo">
-        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
-      </div>
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto" href="AdminHome.jsp">Home</a></li>
-          <li><a class="nav-link scrollto active" href="Stations.jsp">Station</a></li>
-          <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-      <!-- .navbar -->
-    </div>
-  </header><!-- End Header -->
-
-  <!-- ======= Hero Section ======= -->
+  <!-- Hero Section -->
   <section id="hero">
-
-    <div class="container">
-     
-    </div>
-
-    <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28 " preserveAspectRatio="none">
+    <div class="container"></div>
+    <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none">
       <defs>
         <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z">
       </defs>
-      <g class="wave1">
-        <use xlink:href="#wave-path" x="50" y="3" fill="rgba(255,255,255, .1)">
-      </g>
-      <g class="wave2">
-        <use xlink:href="#wave-path" x="50" y="0" fill="rgba(255,255,255, .2)">
-      </g>
-      <g class="wave3">
-        <use xlink:href="#wave-path" x="50" y="9" fill="#fff">
-      </g>
+      <g class="wave1"><use xlink:href="#wave-path" x="50" y="3" fill="rgba(255,255,255, .1)"></g>
+      <g class="wave2"><use xlink:href="#wave-path" x="50" y="0" fill="rgba(255,255,255, .2)"></g>
+      <g class="wave3"><use xlink:href="#wave-path" x="50" y="9" fill="#fff"></g>
     </svg>
-
-  </section><!-- End Hero -->
+  </section>
 
   <main id="main">
     <section id="manage-station" class="contact stations-section">
@@ -131,7 +97,7 @@
           <a href="Stations.jsp" style="color:#01036f;font-weight:500;"><i class="bi bi-arrow-left"></i> Back to Stations</a>
         </div>
 
-        <!-- Station info -->
+        <!-- Station Info Card -->
         <div class="station-detail-card">
           <div class="station-detail-head">
             <div class="station-icon"><i class="bi bi-lightning-charge-fill"></i></div>
@@ -165,20 +131,29 @@
           </div>
         </div>
 
-        <!-- Slot summary -->
+        <!-- Slot Dynamic Summary -->
         <div class="row g-3 slot-summary">
           <div class="col-4">
-            <div class="summary-box"><span class="summary-number"><%= slots.size() %></span><span class="summary-text">Total slots</span></div>
+            <div class="summary-box">
+              <span class="summary-number"><%= slots.size() %></span>
+              <span class="summary-text">Total slots</span>
+            </div>
           </div>
           <div class="col-4">
-            <div class="summary-box"><span class="summary-number"><%= availableCount %></span><span class="summary-text">Available</span></div>
+            <div class="summary-box">
+              <span class="summary-number text-success"><%= availableCount %></span>
+              <span class="summary-text">Available</span>
+            </div>
           </div>
           <div class="col-4">
-            <div class="summary-box"><span class="summary-number"><%= otherCount %></span><span class="summary-text">Reserved / other</span></div>
+            <div class="summary-box">
+              <span class="summary-number text-warning"><%= otherCount %></span>
+              <span class="summary-text">Reserved / other</span>
+            </div>
           </div>
         </div>
 
-        <!-- Slots -->
+        <!-- Slots Table -->
         <div class="stations-toolbar mt-4">
           <span class="stations-count">Slots at this station</span>
           <div class="d-flex gap-2 flex-wrap">
@@ -221,7 +196,11 @@
                   <td class="slot-name"><%= esc(sl.getSlotLabel()) %></td>
                   <td><span class="chip chip-vehicle"><%= esc(sl.getVehicleType()) %></span></td>
                   <td><span class="chip chip-charger"><i class="bi bi-plug"></i> <%= esc(sl.getChargerType()) %></span></td>
-                  <td><span class="status-pill <%= statusClass(sl.getStatus()) %>"><i class="bi bi-circle-fill"></i> <%= esc(sl.getStatus()) %></span></td>
+                  <td>
+                    <span class="status-pill <%= statusClass(sl.getStatus()) %>">
+                      <i class="bi bi-circle-fill"></i> <%= esc(sl.getStatus()) %>
+                    </span>
+                  </td>
                   <td class="text-end slot-actions">
                     <button type="button" class="btn-slot btn-slot-edit"
                             data-bs-toggle="modal" data-bs-target="#updateSlotModal"
@@ -250,19 +229,17 @@
       </div>
     </section>
   </main>
-  <!-- End #main -->
 
-<!-- ======= Footer ======= -->
+  <!-- Footer -->
   <footer id="footer">
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>⚡ Plugy</span></strong>. All Rights Reserved
       </div>
     </div>
   </footer>
-  <!-- End Footer -->
 
-  <!-- ======= Update Slot Modal ======= -->
+  <!-- Update Slot Modal -->
   <div class="modal fade" id="updateSlotModal" tabindex="-1" aria-labelledby="updateSlotLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content station-modal">
@@ -313,7 +290,7 @@
     </div>
   </div>
 
-  <!-- ======= Delete Slot Modal ======= -->
+  <!-- Delete Slot Modal -->
   <div class="modal fade" id="deleteSlotModal" tabindex="-1" aria-labelledby="deleteSlotLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content station-modal">
@@ -345,10 +322,9 @@
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <!-- self Main JS File -->
   <script src="assets/js/main.js?v=2"></script>
+  
   <script>
-    // Fill the Update modal from the clicked row
     document.getElementById('updateSlotModal').addEventListener('show.bs.modal', function (e) {
       var b = e.relatedTarget;
       if (!b) return;
@@ -359,7 +335,6 @@
       setSelect('updStatus', b.getAttribute('data-status'));
     });
 
-    // Fill the Delete modal from the clicked row
     document.getElementById('deleteSlotModal').addEventListener('show.bs.modal', function (e) {
       var b = e.relatedTarget;
       if (!b) return;
@@ -367,7 +342,6 @@
       document.getElementById('delSlotName').textContent = b.getAttribute('data-label');
     });
 
-    // Select a value, adding it as an option if the list does not have it yet
     function setSelect(id, value) {
       var sel = document.getElementById(id);
       for (var i = 0; i < sel.options.length; i++) {

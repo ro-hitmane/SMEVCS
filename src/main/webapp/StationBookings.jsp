@@ -79,25 +79,7 @@
 
 <body>
 
-  <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top d-flex align-items-center header-transparent">
-    <div class="container d-flex align-items-center justify-content-between">
-
-      <div class="logo">
-        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
-      </div>
-
-      <nav id="navbar" class="navbar">
-        <ul>
-          <li><a class="nav-link scrollto" href="AdminHome.jsp">Home</a></li>
-          <li><a class="nav-link scrollto active" href="Stations.jsp">Station</a></li>
-          <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
-        </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
-      </nav>
-      <!-- .navbar -->
-    </div>
-  </header><!-- End Header -->
+<jsp:include page="nav_admin.jsp" />
 
   <!-- ======= Hero Section ======= -->
   <section id="hero">
