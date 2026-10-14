@@ -1669,3 +1669,378 @@ section {
   left: auto;
   right: auto;
 }
+
+/*--------------------------------------------------------------
+# Admin: Stations page (cards)
+--------------------------------------------------------------*/
+.stations-section .stations-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.stations-section .stations-count {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  color: #01036f;
+}
+.btn-create-station {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: 0;
+  border-radius: 50px;
+  background: #1acc8d;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  transition: 0.3s;
+}
+.btn-create-station:hover {
+  background: #17b57d;
+}
+.station-card {
+  height: 100%;
+  padding: 28px 24px 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(1, 3, 111, 0.1);
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.station-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(1, 3, 111, 0.18);
+}
+.station-card .station-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(26, 204, 141, 0.15);
+  color: #1acc8d;
+  font-size: 28px;
+}
+.station-card .station-name {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #01036f;
+}
+.station-card .station-area {
+  margin: 0 0 20px;
+  color: #6c757d;
+  font-size: 14px;
+}
+.station-card .station-area i {
+  color: #1acc8d;
+}
+.station-card .station-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn-station {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: 1px solid #1acc8d;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-station-solid {
+  background: #1acc8d;
+  color: #fff;
+}
+.btn-station-solid:hover {
+  background: #17b57d;
+  border-color: #17b57d;
+  color: #fff;
+}
+.btn-station-outline {
+  background: transparent;
+  color: #1acc8d;
+}
+.btn-station-outline:hover {
+  background: #1acc8d;
+  color: #fff;
+}
+.stations-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #6c757d;
+}
+.stations-empty i {
+  font-size: 48px;
+  color: #1acc8d;
+}
+.station-modal .modal-title {
+  color: #01036f;
+  font-weight: 700;
+}
+.station-modal .form-label {
+  font-weight: 500;
+  color: #01036f;
+}
+
+.station-card {
+  display: flex;
+  flex-direction: column;
+}
+.station-card .station-area {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.station-card .station-address {
+  margin: 0 0 20px;
+  color: #6c757d;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.station-card .station-actions {
+  margin-top: auto;
+}
+
+/*--------------------------------------------------------------
+# Admin: Manage Station page
+--------------------------------------------------------------*/
+.station-detail-card {
+  padding: 28px 28px 24px;
+  margin-bottom: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(1, 3, 111, 0.1);
+}
+.station-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.station-detail-head .station-icon {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(26, 204, 141, 0.15);
+  color: #1acc8d;
+  font-size: 28px;
+}
+.station-detail-name {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #01036f;
+}
+.station-detail-id {
+  font-size: 13px;
+  color: #6c757d;
+}
+.station-detail-grid .detail-label {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6c757d;
+}
+.station-detail-grid .detail-label i {
+  color: #1acc8d;
+  margin-right: 4px;
+}
+.station-detail-grid .detail-value {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: #01036f;
+  word-break: break-word;
+}
+.slot-summary .summary-box {
+  padding: 16px 10px;
+  text-align: center;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(1, 3, 111, 0.08);
+}
+.slot-summary .summary-number {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1acc8d;
+  line-height: 1.2;
+}
+.slot-summary .summary-text {
+  display: block;
+  font-size: 13px;
+  color: #6c757d;
+}
+
+/*--------------------------------------------------------------
+# Admin: Slots table, status pills and action buttons
+--------------------------------------------------------------*/
+.slot-table-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(1, 3, 111, 0.1);
+  overflow: hidden;
+}
+.slot-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  color: #2c3e50;
+}
+.slot-table thead th {
+  padding: 14px 16px;
+  background: linear-gradient(90deg, #01036f, #0205a1);
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 0;
+}
+.slot-table tbody td {
+  padding: 14px 16px;
+  vertical-align: middle;
+  border-bottom: 1px solid #eef0f6;
+  font-size: 15px;
+}
+.slot-table tbody tr:nth-child(even) {
+  background: #f8f9fd;
+}
+.slot-table tbody tr:hover {
+  background: rgba(26, 204, 141, 0.08);
+}
+.slot-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.slot-table .slot-num {
+  width: 50px;
+  color: #6c757d;
+}
+.slot-table .slot-name {
+  font-weight: 600;
+  color: #01036f;
+  white-space: nowrap;
+}
+.slot-table .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.slot-table .chip-vehicle {
+  background: rgba(2, 5, 161, 0.08);
+  color: #0205a1;
+}
+.slot-table .chip-charger {
+  background: #f1f3f9;
+  color: #44506b;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.status-pill i {
+  font-size: 8px;
+}
+.status-available   { background: rgba(26, 204, 141, 0.15); color: #0e9b6b; }
+.status-reserved    { background: rgba(255, 193, 7, 0.2);   color: #8a6500; }
+.status-offline     { background: rgba(108, 117, 125, 0.18); color: #495057; }
+.status-maintenance { background: rgba(253, 126, 20, 0.18); color: #b4570a; }
+.status-other       { background: #eef0f6;                  color: #44506b; }
+.slot-actions {
+  white-space: nowrap;
+}
+.btn-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  margin-left: 6px;
+  border-radius: 50px;
+  background: transparent;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.btn-slot-edit {
+  border: 1px solid #0205a1;
+  color: #0205a1;
+}
+.btn-slot-edit:hover {
+  background: #0205a1;
+  color: #fff;
+}
+.btn-slot-delete {
+  border: 1px solid #dc3545;
+  color: #dc3545;
+}
+.btn-slot-delete:hover {
+  background: #dc3545;
+  color: #fff;
+}
+.btn-station-danger {
+  background: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+}
+.btn-station-danger:hover {
+  background: #b92c3a;
+  border-color: #b92c3a;
+  color: #fff;
+}
+.slot-empty {
+  padding: 40px 16px !important;
+  text-align: center;
+  color: #6c757d;
+}
+.slot-empty i {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 32px;
+  color: #1acc8d;
+}
+.delete-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(220, 53, 69, 0.1);
+  color: #a71d2a;
+  font-size: 14px;
+}
+.delete-warning i {
+  margin-top: 2px;
+}

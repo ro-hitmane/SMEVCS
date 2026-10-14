@@ -147,7 +147,7 @@
                 <% if (isAvailable) { %>
                   <button type="button" class="btn btn-search-custom w-100 py-2" 
                           onclick="openPaymentModal('<%= slotId %>', '<%= stationName %> - <%= slotLabel %>', '<%= passedAmount %>')">
-                    Book & Pay Now
+                    Book &amp; Pay Now
                   </button>
                 <% } else { %>
                   <button type="button" class="btn btn-search-custom w-100 py-2" disabled>
@@ -237,7 +237,7 @@
               
               <!-- Hidden Date/Time Picker -->
               <div id="reserveTimeContainer" style="display: none; margin-top: 10px;">
-                <label class="custom-label small text-muted">Select Start Date & Time</label>
+                <label class="custom-label small text-muted">Select Start Date &amp; Time</label>
                 <input type="datetime-local" class="form-control custom-input" name="start_time" id="start_time_input">
               </div>
             </div>
@@ -258,7 +258,7 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-search-custom w-100 py-3">Confirm & Pay</button>
+            <button type="submit" class="btn btn-search-custom w-100 py-3">Confirm &amp; Pay</button>
           </form>
         </div>
       </div>
@@ -269,7 +269,6 @@
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  
   <script src="assets/js/main.js"></script>
 
   <script>
@@ -278,7 +277,6 @@
       document.getElementById('modalSlotName').innerText = slotName;
       document.getElementById('modalAmount').value = amount;
       
-      // Enforce minimum selectable time as right now
       const now = new Date();
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       document.getElementById('start_time_input').min = now.toISOString().slice(0, 16);

@@ -40,7 +40,8 @@ public class UserDao {
 
 	public boolean InsertPayData(Pay pay) {
 
-		String sql = "insert into tbl_payment values(null,?,?,?,?)";
+		String sql = "insert into tbl_payment(ownername, number, bat, amt, pay_mode, email, slot_id, start_time, end_time) "
+				+ "values(?,?,?,?,?,?,?,?,?)";
 		boolean flag = false;
 
 		try (Connection con = DBConnection.getConnection()) {
@@ -52,6 +53,11 @@ public class UserDao {
 				ps.setString(2, pay.getNo());
 				ps.setString(3, pay.getBat());
 				ps.setString(4, pay.getAmt());
+				ps.setString(5, pay.getPayMode());
+				ps.setString(6, pay.getEmail());
+				ps.setInt(7, pay.getSlotId());
+				ps.setTimestamp(8, pay.getStartTime());
+				ps.setTimestamp(9, pay.getEndTime());
 
 				flag = ps.executeUpdate() > 0;
 			}

@@ -11,7 +11,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.connection.DBConnection;
 
@@ -21,59 +20,57 @@ public class SearchSlotcontroller extends HttpServlet {
 
     public SearchSlotcontroller() {
         super();
-
     }
-
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out=response.getWriter();
-HttpSession ss=request.getSession();
+		PrintWriter out = response.getWriter();
 
-String slotname=request.getParameter("slotname");
-String address=request.getParameter("address");
-String area=request.getParameter("area");
-String city=request.getParameter("city");
-String state=request.getParameter("state");
+		String slotname = request.getParameter("slotname");
+		String address = request.getParameter("address");
+		String area = request.getParameter("area");
+		String city = request.getParameter("city");
+		String state = request.getParameter("state");
 
-String sql = "insert into tbl_booking values(null,?,?,?,?,?)";
+		String sql = "insert into tbl_booking values(null,?,?,?,?,?)";
 
-Connection con = DBConnection.getConnection();
-PreparedStatement ps=null;
-try {
-	ps = con.prepareStatement(sql);
+		Connection con = DBConnection.getConnection();
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement(sql);
+			ps.setString(1, slotname);
+			ps.setString(2, address);
+			ps.setString(3, area);
+			ps.setString(4, city);
+			ps.setString(5, state);
 
+			int index = ps.executeUpdate();
 
-	ps.setString(1, slotname);
-	ps.setString(2, address);
-	ps.setString(3, area);
-	ps.setString(4, city);
-	ps.setString(5, state);
-
-	int index = ps.executeUpdate();
-
-	if (index > 0) {
-		out.println("<script type=\"text/javascript\">");
-		out.println("alert('Booking Confirmed')");
-		out.println("location='UserHome.jsp';");
-		out.println("</script>");
-	} else {
-		out.println("<script type=\"text/javascript\">");
-		out.println("alert('Booking not confirmed')");
-		out.println("location='UserHome.jsp';");
-		out.println("</script>");
+			if (index > 0) {
+				out.println("<script type=\"text/javascript\">");
+				out.println("alert('Booking Confirmed');");
+				out.println("location='UserHome.jsp';");
+				out.println("</script>");
+			} else {
+				out.println("<script type=\"text/javascript\">");
+				out.println("alert('Booking not confirmed');");
+				out.println("location='UserHome.jsp';");
+				out.println("</script>");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try { ps.close(); } catch (SQLException e) {}
+			}
+			if (con != null) {
+				try { con.close(); } catch (SQLException e) {}
+			}
+		}
 	}
-} catch (SQLException e) {
-
-	e.printStackTrace();
-}
-	}
-
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		doGet(request, response);
 	}
-
 }

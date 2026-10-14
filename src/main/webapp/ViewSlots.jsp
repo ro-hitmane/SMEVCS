@@ -1,8 +1,24 @@
 <!DOCTYPE html>
 <%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.Statement"%>
+<%@page import="java.sql.PreparedStatement"%>
 <%@page import="com.connection.DBConnection"%>
 <%@page import="java.sql.Connection"%>
+<%!
+    private static String esc(String v) {
+        if (v == null) return "";
+        return v.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
+    }
+
+    private static String statusClass(String st) {
+        if (st == null) return "status-other";
+        String v = st.trim().toLowerCase();
+        if (v.equals("available")) return "status-available";
+        if (v.equals("reserved")) return "status-reserved";
+        if (v.equals("offline")) return "status-offline";
+        if (v.contains("maint")) return "status-maintenance";
+        return "status-other";
+    }
+%>
 <html lang="en">
 
 <head>
@@ -30,7 +46,7 @@
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/style.css?v=6" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: Bootslander - v4.7.0
@@ -52,12 +68,9 @@
 
       <nav id="navbar" class="navbar">
          <ul>
-         <li><a class="nav-link scrollto active" href="AdminHome.jsp">Home</a></li>        
-          <li><a class="nav-link scrollto" href="ManageSlots.jsp">Manage Charging Slots</a></li>
-           <li><a class="nav-link scrollto" href="ViewSlots.jsp">View Slots</a></li>
-           <li><a class="nav-link scrollto" href="BookingHistory.jsp">View Booking History</a></li>
-            
-             <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
+          <li><a class="nav-link scrollto" href="AdminHome.jsp">Home</a></li>
+          <li><a class="nav-link scrollto active" href="Stations.jsp">Station</a></li>
+          <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
@@ -99,54 +112,59 @@
           <h2>Slots</h2>
           <p>View Slots</p>
         </div>
+        <div class="mb-3"><a href="Stations.jsp" style="color:#01036f;font-weight:500;"><i class="bi bi-arrow-left"></i> Back to Stations</a></div>
 
-        <div class="row">
-          <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
-
-           <div class="table-responsive">
-  <table class="table table-bordered" style="color:black">
-    <tr class="danger" style="color:black">
-      <th>ID</th>
-      <th>Station</th>
-      <th>Area</th>
-      <th>Slot Label</th>
-      <th>Vehicle Type</th>
-      <th>Charger Type</th>
-      <th>Status</th>
-    </tr>
+        <div class="slot-table-card">
+          <div class="table-responsive">
+            <table class="slot-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Station</th>
+                  <th>Area</th>
+                  <th>Slot</th>
+                  <th>Vehicle Type</th>
+                  <th>Charger</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
     <%
     Connection con = DBConnection.getConnection();
     if (con == null) {
     %>
-      <tr><td colspan="7">Could not connect to the database.</td></tr>
+                <tr><td colspan="7" class="slot-empty"><i class="bi bi-exclamation-triangle-fill"></i><span>Could not connect to the database.</span></td></tr>
     <%
     } else {
       try {
-        Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery(
-          "select sl.id, st.station_name, st.area, sl.slot_label, sl.vehicle_type, sl.charger_type, sl.status " +
+        String stationParam = request.getParameter("stationId");
+        boolean filtered = stationParam != null && stationParam.matches("\\d+");
+        String query = "select sl.id, st.station_name, st.area, sl.slot_label, sl.vehicle_type, sl.charger_type, sl.status " +
           "from tbl_slot sl join tbl_station st on st.id = sl.station_id " +
-          "order by st.station_name, sl.slot_label");
-        boolean any = false;
+          (filtered ? "where st.id = ? " : "") +
+          "order by st.station_name, sl.slot_label";
+        PreparedStatement st = con.prepareStatement(query);
+        if (filtered) st.setInt(1, Integer.parseInt(stationParam));
+        ResultSet rs = st.executeQuery();
+        int n = 0;
         while (rs.next()) {
-          any = true;
+          n++;
           String status = rs.getString("status");
-          String badge = "Available".equals(status) ? "bg-success" : "bg-warning text-dark";
     %>
-          <tr>
-            <td><%= rs.getInt("id") %></td>
-            <td><%= rs.getString("station_name") %></td>
-            <td><%= rs.getString("area") %></td>
-            <td><%= rs.getString("slot_label") %></td>
-            <td><%= rs.getString("vehicle_type") %></td>
-            <td><%= rs.getString("charger_type") %></td>
-            <td><span class="badge <%= badge %>"><%= status %></span></td>
-          </tr>
+                <tr>
+                  <td class="slot-num"><%= n %></td>
+                  <td class="slot-name"><%= esc(rs.getString("station_name")) %></td>
+                  <td><%= esc(rs.getString("area")) %></td>
+                  <td><%= esc(rs.getString("slot_label")) %></td>
+                  <td><span class="chip chip-vehicle"><%= esc(rs.getString("vehicle_type")) %></span></td>
+                  <td><span class="chip chip-charger"><i class="bi bi-plug"></i> <%= esc(rs.getString("charger_type")) %></span></td>
+                  <td><span class="status-pill <%= statusClass(status) %>"><i class="bi bi-circle-fill"></i> <%= esc(status) %></span></td>
+                </tr>
     <%
         }
-        if (!any) {
+        if (n == 0) {
     %>
-          <tr><td colspan="7">No slots added yet.</td></tr>
+                <tr><td colspan="7" class="slot-empty"><i class="bi bi-plug"></i><span>No slots added yet.</span></td></tr>
     <%
         }
         rs.close();
@@ -154,15 +172,15 @@
       } catch (Exception e) {
         e.printStackTrace();
     %>
-        <tr><td colspan="7">Error loading slots. Check the server log.</td></tr>
+                <tr><td colspan="7" class="slot-empty"><i class="bi bi-exclamation-triangle-fill"></i><span>Error loading slots. Check the server log.</span></td></tr>
     <%
       } finally {
         try { con.close(); } catch (Exception ignored) {}
       }
     }
     %>
-  </table>
-</div>
+              </tbody>
+            </table>
           </div>
         </div>
 

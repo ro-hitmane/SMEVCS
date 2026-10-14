@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>SMEVCS</title>
+  <title>Plugy - EV Charging Network</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -25,9 +25,8 @@
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-  <!-- self CSS File -->
+  <!-- Main CSS File -->
   <link href="assets/css/style.css?v=2" rel="stylesheet">
-
 </head>
 
 <body>
@@ -37,22 +36,21 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
-        <h1><a href="index.jsp"><span> Plugy</span></a></h1>
+        <h1><a href="index.jsp"><span>Plugy</span></a></h1>
       </div>
 
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link scrollto active" href="index.jsp">Home</a></li>
-         <li><a class="nav-link scrollto " href="#about">About</a></li>
-         <li><a class="nav-link scrollto " href="#contact">Contact Us</a></li>         
+          <li><a class="nav-link scrollto" href="#about">About</a></li>
+          <li><a class="nav-link scrollto" href="#contact">Contact Us</a></li>
           <li class="dropdown login-dropdown">
             <a class="nav-link login-btn" href="#" aria-haspopup="true"><span>Login</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
-              <li><a class="" href="AdminLogin.jsp"><i class="bi bi-shield-lock"></i>&nbsp; Admin</a></li>
-              <li><a class="" href="UserLogin.jsp"><i class="bi bi-person"></i>&nbsp; User</a></li>
+              <li><a href="AdminLogin.jsp"><i class="bi bi-shield-lock"></i>&nbsp; Admin</a></li>
+              <li><a href="UserLogin.jsp"><i class="bi bi-person"></i>&nbsp; User</a></li>
             </ul>
           </li>
-         <%--  <li><a class="nav-link scrollto" href="Chatbot.jsp">Chatbot</a></li>--%>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
@@ -63,7 +61,6 @@
 
   <!-- ======= Hero Section ======= -->
   <section id="hero">
-
     <div class="container">
       <div class="row justify-content-between">
         <div class="col-lg-7 pt-5 pt-lg-0 order-2 order-lg-1 d-flex align-items-center">
@@ -77,7 +74,7 @@
       </div>
     </div>
 
-    <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28 " preserveAspectRatio="none">
+    <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none">
       <defs>
         <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z">
       </defs>
@@ -91,7 +88,6 @@
         <use xlink:href="#wave-path" x="50" y="9" fill="#fff">
       </g>
     </svg>
-
   </section>
   <!-- End Hero -->
 
@@ -100,10 +96,8 @@
     <!-- ======= About Section ======= -->
     <section id="about" class="about">
       <div class="container-fluid">
-
         <div class="row">
-          <div class="col-xl-5 col-lg-6 video-box d-flex justify-content-center align-items-stretch">
-          </div>
+          <div class="col-xl-5 col-lg-6 video-box d-flex justify-content-center align-items-stretch"></div>
 
           <div class="col-xl-7 col-lg-6 icon-boxes d-flex flex-column align-items-stretch justify-content-center py-5 px-lg-5" data-aos="fade-left">
             <h3>- About Us -</h3>
@@ -111,70 +105,59 @@
             <div class="icon-box" data-aos="zoom-in" data-aos-delay="100">
               <div class="icon"><i class="bx bx-fingerprint"></i></div>
               <h4 class="title"><a href="">Easy Route Finding</a></h4>
-              <p class="description">Best Navigation System which help you to reach at exact and appropriate Station</p>
+              <p class="description">Best navigation system to help you reach the nearest verified charging station.</p>
             </div>
 
             <div class="icon-box" data-aos="zoom-in" data-aos-delay="200">
               <div class="icon"><i class="bx bx-gift"></i></div>
               <h4 class="title"><a href="">Easy Slot Booking</a></h4>
-              <p class="description">Book your Slot easily and get unique barcode for your Booking</p>
+              <p class="description">Book your slot easily and reserve ahead of your journey.</p>
             </div>
 
             <div class="icon-box" data-aos="zoom-in" data-aos-delay="300">
               <div class="icon"><i class="bx bx-atom"></i></div>
-              <h4 class="title"><a href="">Solve Queries with our Smart ChatBot</a></h4>
-              <p class="description">Our smart AI charbot will help you solving your Queries easily and Quickly </p>
+              <h4 class="title"><a href="">Solve Queries with Smart Support</a></h4>
+              <p class="description">Our interactive support helps address your queries quickly.</p>
             </div>
-
           </div>
         </div>
-
       </div>
-    </section><!-- End About Section -->
-
-
-
-
+    </section>
+    <!-- End About Section -->
 
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact">
       <div class="container">
-
         <div class="section-title" data-aos="fade-up">
           <h2>Contact</h2>
           <p>Contact Us</p>
         </div>
 
         <div class="row">
-
           <div class="col-lg-4" data-aos="fade-right" data-aos-delay="100">
             <div class="info">
               <div class="address">
                 <i class="bi bi-geo-alt"></i>
                 <h4>Location:</h4>
-                <p>A108 Adam Street, New York, NY 535022</p>
+                <p>Pune &amp; PCMC Hub Network, Maharashtra, India</p>
               </div>
 
               <div class="email">
                 <i class="bi bi-envelope"></i>
                 <h4>Email:</h4>
-                <p>info@example.com</p>
+                <p>support@plugy.com</p>
               </div>
 
               <div class="phone">
                 <i class="bi bi-phone"></i>
                 <h4>Call:</h4>
-                <p>+1 5589 55488 55s</p>
+                <p>+91 20 2550 0000</p>
               </div>
-
             </div>
-
           </div>
 
           <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
-
             <form action="ContactController" method="post" role="form" class="email-form">
-              <!-- Honeypot field for spam bots: hidden from real users -->
               <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
               <div class="form-header">
                 <h3>Send us a message</h3>
@@ -185,7 +168,7 @@
                   <label for="name">Your Name</label>
                   <div class="input-wrap">
                     <i class="bi bi-person"></i>
-                    <input type="text" name="name" class="form-control" id="name" placeholder="John Doe" required>
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Rohit Mane" required>
                   </div>
                 </div>
                 <div class="col-md-6 form-group mt-3 mt-md-0">
@@ -217,11 +200,8 @@
               </div>
               <div class="text-center"><button type="submit"><i class="bi bi-send"></i> Send Message</button></div>
             </form>
-
           </div>
-
         </div>
-
       </div>
     </section>
     <!-- End Contact Section -->
@@ -231,13 +211,10 @@
 
   <!-- ======= Footer ======= -->
   <footer id="footer">
-    
-
     <div class="container">
       <div class="copyright">
         &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
-      
     </div>
   </footer>
   <!-- End Footer -->
@@ -252,10 +229,8 @@
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
 
-  <!-- Self Main JS File -->
-  <script src="assets/js/main.js?v=2"></script>
+  <!-- Main JS Files -->
+  <script src="assets/js/main.js"></script>
   <script src="assets/js/contact.js"></script>
-
 </body>
-
 </html>

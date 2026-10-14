@@ -2,7 +2,6 @@
 <%@ page import="java.sql.*, com.connection.DBConnection" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%
-    // Check session first, then request parameter as fallback
     String userEmail = (String) session.getAttribute("email");
     if (userEmail == null || userEmail.trim().isEmpty()) {
         userEmail = request.getParameter("email");
@@ -55,7 +54,7 @@
         
         <div class="section-title text-center mb-4">
           <h2>Plugy</h2>
-          <p>My Bookings & Receipts</p>
+          <p>My Bookings &amp; Receipts</p>
         </div>
 
         <div class="row justify-content-center">
@@ -81,14 +80,14 @@
 
                 <div class="tab-content" id="bookingTabsContent">
                   
-                  <!-- CURRENT RESERVATIONS TAB -->
+                  <!-- TAB 1: CURRENT / ACTIVE RESERVATIONS (end_time > NOW()) -->
                   <div class="tab-pane fade show active" id="active" role="tabpanel">
                     <div class="table-responsive">
                       <table class="table table-hover align-middle">
                         <thead class="table-light">
                           <tr>
                             <th>Booking ID</th>
-                            <th>Station & Bay</th>
+                            <th>Station &amp; Bay</th>
                             <th>Vehicle No.</th>
                             <th>Payment</th>
                             <th>Status</th>
@@ -98,45 +97,43 @@
                         <tbody>
                           <%
                              Connection con = null;
-                             PreparedStatement ps = null;
-                             ResultSet rs = null;
+                             PreparedStatement psActive = null;
+                             ResultSet rsActive = null;
                              SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a");
                              
                              try {
                                  con = DBConnection.getConnection();
-                                 // Relational query pulling from payment, slot, and station tables
-                                 String query = "SELECT p.id as payment_id, p.ownername, p.number, p.pay_mode, p.amt, p.start_time, p.end_time, " +
-                                                "s.slot_label, s.vehicle_type, s.charger_type, " +
-                                                "st.station_name, st.address, st.city " +
-                                                "FROM tbl_payment p " +
-                                                "JOIN tbl_slot s ON p.slot_id = s.id " +
-                                                "JOIN tbl_station st ON s.station_id = st.id " +
-                                                "WHERE p.email = ? ORDER BY p.id DESC";
+                                 String activeQuery = "SELECT p.id as payment_id, p.ownername, p.number, p.pay_mode, p.amt, p.start_time, p.end_time, " +
+                                                      "s.slot_label, s.vehicle_type, s.charger_type, " +
+                                                      "st.station_name, st.address, st.city " +
+                                                      "FROM tbl_payment p " +
+                                                      "JOIN tbl_slot s ON p.slot_id = s.id " +
+                                                      "JOIN tbl_station st ON s.station_id = st.id " +
+                                                      "WHERE p.email = ? AND p.end_time > NOW() " +
+                                                      "ORDER BY p.start_time ASC";
                                                 
-                                 ps = con.prepareStatement(query);
-                                 ps.setString(1, userEmail);
-                                 rs = ps.executeQuery();
+                                 psActive = con.prepareStatement(activeQuery);
+                                 psActive.setString(1, userEmail);
+                                 rsActive = psActive.executeQuery();
                                  
-                                 boolean hasRecords = false;
-                                 while(rs.next()) {
-                                     hasRecords = true;
-                                     String txId = "PLG-" + rs.getInt("payment_id") + "849";
-                                     String owner = rs.getString("ownername");
-                                     String vehicle = rs.getString("number");
-                                     String mode = rs.getString("pay_mode");
-                                     String amt = rs.getString("amt");
+                                 boolean hasActive = false;
+                                 while(rsActive.next()) {
+                                     hasActive = true;
+                                     String txId = "PLG-" + rsActive.getInt("payment_id") + "849";
+                                     String owner = rsActive.getString("ownername");
+                                     String vehicle = rsActive.getString("number");
+                                     String mode = rsActive.getString("pay_mode");
+                                     String amt = rsActive.getString("amt");
                                      
-                                     String stationName = rs.getString("station_name");
-                                     String slotLabel = rs.getString("slot_label");
-                                     String location = rs.getString("city");
+                                     String stationName = rsActive.getString("station_name");
+                                     String slotLabel = rsActive.getString("slot_label");
+                                     String location = rsActive.getString("city");
                                      
-                                     Timestamp startTime = rs.getTimestamp("start_time");
-                                     Timestamp endTime = rs.getTimestamp("end_time");
+                                     Timestamp startTime = rsActive.getTimestamp("start_time");
+                                     Timestamp endTime = rsActive.getTimestamp("end_time");
                                      
                                      String formattedStart = (startTime != null) ? sdf.format(startTime) : "N/A";
                                      String formattedEnd = (endTime != null) ? sdf.format(endTime) : "N/A";
-                                     
-                                     // Escape single quotes for JavaScript function call
                                      String fullStationStr = (stationName + ", " + location).replace("'", "\\'");
                           %>
                           <tr>
@@ -150,7 +147,7 @@
                                 <div class="fw-bold text-success">₹<%= amt %></div>
                                 <span class="badge bg-light text-dark border px-2 py-0"><%= mode %></span>
                             </td>
-                            <td><span class="badge bg-success px-3 py-2 rounded-pill">Reserved</span></td>
+                            <td><span class="badge bg-success px-3 py-2 rounded-pill">Active</span></td>
                             <td class="text-end">
                               <button class="btn btn-sm btn-outline-secondary" 
                                       onclick="viewSlip('<%= txId %>', '<%= owner %>', '<%= vehicle %>', '<%= mode %>', '<%= amt %>', '<%= fullStationStr %>', '<%= slotLabel %>', '<%= formattedStart %>', '<%= formattedEnd %>')">
@@ -160,16 +157,14 @@
                           </tr>
                           <%
                                  }
-                                 if (!hasRecords) {
-                                     out.println("<tr><td colspan='6' class='text-center text-muted py-4'>No current reservations found for " + userEmail + "</td></tr>");
+                                 if (!hasActive) {
+                                     out.println("<tr><td colspan='6' class='text-center text-muted py-4'>No ongoing or upcoming reservations found.</td></tr>");
                                  }
                              } catch (Exception e) { 
                                  e.printStackTrace();
-                                 out.println("<tr><td colspan='6' class='text-center text-danger'>Failed to load bookings.</td></tr>");
                              } finally {
-                                 if(rs != null) try{ rs.close(); } catch(Exception e){}
-                                 if(ps != null) try{ ps.close(); } catch(Exception e){}
-                                 if(con != null) try{ con.close(); } catch(Exception e){}
+                                 if(rsActive != null) try{ rsActive.close(); } catch(Exception e){}
+                                 if(psActive != null) try{ psActive.close(); } catch(Exception e){}
                              }
                           %>
                         </tbody>
@@ -177,14 +172,14 @@
                     </div>
                   </div>
 
-                  <!-- PREVIOUS BOOKINGS TAB -->
+                  <!-- TAB 2: PREVIOUS / EXPIRED BOOKINGS (end_time <= NOW()) -->
                   <div class="tab-pane fade" id="history" role="tabpanel">
                     <div class="table-responsive">
                       <table class="table table-hover align-middle text-muted">
                         <thead class="table-light">
                           <tr>
                             <th>Booking ID</th>
-                            <th>Station & Bay</th>
+                            <th>Station &amp; Bay</th>
                             <th>Vehicle No.</th>
                             <th>Payment</th>
                             <th>Status</th>
@@ -192,9 +187,75 @@
                           </tr>
                         </thead>
                         <tbody>
+                          <%
+                             PreparedStatement psPast = null;
+                             ResultSet rsPast = null;
+                             try {
+                                 String pastQuery = "SELECT p.id as payment_id, p.ownername, p.number, p.pay_mode, p.amt, p.start_time, p.end_time, " +
+                                                    "s.slot_label, s.vehicle_type, s.charger_type, " +
+                                                    "st.station_name, st.address, st.city " +
+                                                    "FROM tbl_payment p " +
+                                                    "JOIN tbl_slot s ON p.slot_id = s.id " +
+                                                    "JOIN tbl_station st ON s.station_id = st.id " +
+                                                    "WHERE p.email = ? AND p.end_time <= NOW() " +
+                                                    "ORDER BY p.end_time DESC";
+                                                
+                                 psPast = con.prepareStatement(pastQuery);
+                                 psPast.setString(1, userEmail);
+                                 rsPast = psPast.executeQuery();
+                                 
+                                 boolean hasPast = false;
+                                 while(rsPast.next()) {
+                                     hasPast = true;
+                                     String txId = "PLG-" + rsPast.getInt("payment_id") + "849";
+                                     String owner = rsPast.getString("ownername");
+                                     String vehicle = rsPast.getString("number");
+                                     String mode = rsPast.getString("pay_mode");
+                                     String amt = rsPast.getString("amt");
+                                     
+                                     String stationName = rsPast.getString("station_name");
+                                     String slotLabel = rsPast.getString("slot_label");
+                                     String location = rsPast.getString("city");
+                                     
+                                     Timestamp startTime = rsPast.getTimestamp("start_time");
+                                     Timestamp endTime = rsPast.getTimestamp("end_time");
+                                     
+                                     String formattedStart = (startTime != null) ? sdf.format(startTime) : "N/A";
+                                     String formattedEnd = (endTime != null) ? sdf.format(endTime) : "N/A";
+                                     String fullStationStr = (stationName + ", " + location).replace("'", "\\'");
+                          %>
                           <tr>
-                            <td colspan="6" class="text-center text-muted py-4">No previous booking history available.</td>
+                            <td class="fw-semibold text-secondary"><%= txId %></td>
+                            <td>
+                                <strong><%= stationName %></strong><br>
+                                <span class="text-muted small"><%= slotLabel %></span>
+                            </td>
+                            <td><%= vehicle %></td>
+                            <td>
+                                <div class="fw-bold text-dark">₹<%= amt %></div>
+                                <span class="badge bg-light text-muted border px-2 py-0"><%= mode %></span>
+                            </td>
+                            <td><span class="badge bg-secondary px-3 py-2 rounded-pill">Completed</span></td>
+                            <td class="text-end">
+                              <button class="btn btn-sm btn-outline-secondary" 
+                                      onclick="viewSlip('<%= txId %>', '<%= owner %>', '<%= vehicle %>', '<%= mode %>', '<%= amt %>', '<%= fullStationStr %>', '<%= slotLabel %>', '<%= formattedStart %>', '<%= formattedEnd %>')">
+                                <i class="bi bi-receipt"></i> Invoice
+                              </button>
+                            </td>
                           </tr>
+                          <%
+                                 }
+                                 if (!hasPast) {
+                                     out.println("<tr><td colspan='6' class='text-center text-muted py-4'>No completed bookings yet.</td></tr>");
+                                 }
+                             } catch (Exception e) { 
+                                 e.printStackTrace();
+                             } finally {
+                                 if(rsPast != null) try{ rsPast.close(); } catch(Exception e){}
+                                 if(psPast != null) try{ psPast.close(); } catch(Exception e){}
+                                 if(con != null) try{ con.close(); } catch(Exception e){}
+                             }
+                          %>
                         </tbody>
                       </table>
                     </div>
@@ -291,7 +352,6 @@
   <script src="assets/js/main.js"></script>
   
   <script>
-    // Injects dynamic, accurate database values into the digital receipt modal
     function viewSlip(txId, owner, vehicle, mode, amt, stationName, bay, start, end) {
       document.getElementById('slipTxId').innerText = txId;
       document.getElementById('slipOwner').innerText = owner;

@@ -2,6 +2,15 @@ package com.bean;
 
 public class Slot {
 	
+	private int id;
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	private int stationId;
 	private String slotLabel;
 	private String vehicleType;

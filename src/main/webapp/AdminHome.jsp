@@ -43,11 +43,7 @@
       <nav id="navbar" class="navbar admin-nav">
         <ul>
           <li><a class="nav-link scrollto active" href="AdminHome.jsp">Home</a></li>
-          <li><a class="nav-link scrollto" href="ManageSlots.jsp">Manage Slots</a></li>
-          <li><a class="nav-link scrollto" href="ViewSlots.jsp">View Slots</a></li>
-          <li><a class="nav-link scrollto" href="BookingHistory.jsp">Bookings</a></li>
-          <li><a class="nav-link scrollto" href="PaymentHistory.jsp">Payments</a></li>
-          <li><a class="nav-link scrollto" href="ContactQueries.jsp">Queries</a></li>
+          <li><a class="nav-link scrollto" href="Stations.jsp">Station</a></li>
           <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>

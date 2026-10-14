@@ -2,6 +2,7 @@
 <%@ page import="java.util.List, com.bean.Station, com.dao.AdminDao" %>
 <%
     List<Station> stations = new AdminDao().getStations();
+    String selectedStation = request.getParameter("stationId");
 %>
 
 <!DOCTYPE html>
@@ -12,7 +13,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>SMEVCS</title>
+   <title>Plugy - Manage Hardware</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -55,12 +56,9 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-         <li><a class="nav-link scrollto active" href="AdminHome.jsp">Home</a></li>        
-          <li><a class="nav-link scrollto" href="ManageSlots.jsp">Manage Charging Slots</a></li>
-           <li><a class="nav-link scrollto" href="ViewSlots.jsp">View Slots</a></li>
-           <li><a class="nav-link scrollto" href="BookingHistory.jsp">View Booking History</a></li>
-           
-             <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
+          <li><a class="nav-link scrollto" href="AdminHome.jsp">Home</a></li>
+          <li><a class="nav-link scrollto active" href="Stations.jsp">Station</a></li>
+          <li><a class="nav-link scrollto" href="LogoutController">Logout</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
@@ -95,68 +93,72 @@
   <main id="main">
 
     <!-- ======= Contact Section ======= -->
-    <section id="contact" class="contact">
+    <section class="contact" class="contact">
       <div class="container">
 
-        <div class="section-title" data-aos="fade-up">
-          <h2>Slots</h2>
-          <p>Add Charging Slots</p>
+        <div class="section-title text-center">
+          <h2>Infrastructure</h2>
+          <p>Add / Update Charging Bay</p>
         </div>
+	 <%
+    boolean hasStation = selectedStation != null && selectedStation.matches("\\d+");
+    String backHref = hasStation ? "ManageStation.jsp?stationId=" + selectedStation : "Stations.jsp";
+    String backText = hasStation ? "Back to Station" : "Back to Stations";
+%>
+<div class="mb-3"><a href="<%= backHref %>" style="color:#01036f;font-weight:500;"><i class="bi bi-arrow-left"></i> <%= backText %></a></div>
+	
+        <div class="row justify-content-center">
+          <div class="col-lg-6">
+            <div class="card shadow p-4 border-0 rounded-4">
+               <form action="ManageSlotsController" method="post">
+                 <div class="form-group mb-3">
+                   <label class="fw-bold small text-muted">Parent Hub</label>
+                   <select class="form-select" name="stationId" required>
+                     <option value="">Select charging station</option>
+                     <% for (Station s : stations) { %>
+                       <option value="<%= s.getId() %>"><%= s.getStationName() %> (<%= s.getArea() %>)</option>
+                     <% } %>
+                   </select>
+                 </div>
 
-        <div class="row">
-          <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
+                 <div class="form-group mb-3">
+                   <label class="fw-bold small text-muted">Bay Identifier</label>
+                   <input type="text" class="form-control" name="slotLabel" placeholder="e.g. Bay 1" required>
+                 </div>
 
-           <form action="ManageSlotsController" method="post" role="form" class="email-form">
+                 <div class="form-group mb-3">
+                   <label class="fw-bold small text-muted">Vehicle Class</label>
+                   <select class="form-select" name="vehicleType" required>
+                     <option value="4-Wheeler-Fast">4-Wheeler-Fast</option>
+                     <option value="4-Wheeler-Normal">4-Wheeler-Normal</option>
+                     <option value="2-Wheeler">2-Wheeler</option>
+                   </select>
+                 </div>
 
-  <div class="form-group mt-3">
-    <select class="form-control" name="stationId" required>
-      <option value="">Select charging station</option>
-      <% for (Station s : stations) { %>
-        <option value="<%= s.getId() %>"><%= s.getStationName() %> (<%= s.getArea() %>)</option>
-      <% } %>
-    </select>
-  </div>
+                 <div class="form-group mb-3">
+                   <label class="fw-bold small text-muted">Connector Standard</label>
+                   <select class="form-select" name="chargerType" required>
+                     <option value="CCS2">CCS2</option>
+                     <option value="CHAdeMO">CHAdeMO</option>
+                     <option value="GB/T">GB/T</option>
+                   </select>
+                 </div>
 
-  <div class="form-group mt-3">
-    <input type="text" class="form-control" name="slotLabel" placeholder="Slot label, e.g. Bay 1" required>
-  </div>
+                 <div class="form-group mb-4">
+                   <label class="fw-bold small text-muted">Hardware State</label>
+                   <select class="form-select border-primary" name="status" required>
+                     <option value="Available" class="text-success fw-bold">Online (Available)</option>
+                     <option value="Maintenance" class="text-danger fw-bold">Offline (Maintenance)</option>
+                   </select>
+                 </div>
 
-  <div class="form-group mt-3">
-    <select class="form-control" name="vehicleType" required>
-      <option value="">Select vehicle type</option>
-      <option>2-Wheeler</option>
-      <option>4-Wheeler-Normal</option>
-      <option>4-Wheeler-Fast</option>
-    </select>
-  </div>
-
-  <div class="form-group mt-3">
-    <select class="form-control" name="chargerType" required>
-      <option value="">Select charger type</option>
-      <option>CCS2</option>
-      <option>CHAdeMO</option>
-      <option>GB/T</option>
-    </select>
-  </div>
-
-  <div class="form-group mt-3">
-    <select class="form-control" name="status" required>
-      <option>Available</option>
-      <option>Reserved</option>
-    </select>
-  </div>
-
-  <br><br>
-  <div class="text-center"><button type="submit">Add Slot</button></div>
-</form>
-           
+                 <button type="submit" class="btn btn-primary w-100 py-2">Deploy Configuration</button>
+               </form>
+            </div>
           </div>
         </div>
-
       </div>
     </section>
-    
-    <!-- End Section -->
 
   </main>
   <!-- End #main -->
