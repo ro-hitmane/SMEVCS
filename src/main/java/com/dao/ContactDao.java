@@ -13,15 +13,9 @@ import com.connection.DBConnection;
 public class ContactDao {
 
 	public boolean insertQuery(ContactQuery q) {
-
-		String sql = "insert into tbl_contact (name, email, subject, message) values (?,?,?,?)";
-
-		Connection con = DBConnection.getConnection();
-		if (con == null) {
-			return false;
-		}
-
-		try (PreparedStatement ps = con.prepareStatement(sql)) {
+		String sql = "INSERT INTO tbl_contact (name, email, subject, message) VALUES (?,?,?,?)";
+		try (Connection con = DBConnection.getConnection();
+			 PreparedStatement ps = con.prepareStatement(sql)) {
 			ps.setString(1, q.getName());
 			ps.setString(2, q.getEmail());
 			ps.setString(3, q.getSubject());
@@ -30,22 +24,17 @@ public class ContactDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
-		} finally {
-			try { con.close(); } catch (SQLException ignore) { }
 		}
 	}
 
+	// Fetch ONLY active queries
 	public List<ContactQuery> getAllQueries() {
-
-		List<ContactQuery> list = new ArrayList<ContactQuery>();
-		String sql = "select id, name, email, subject, message, created_at from tbl_contact order by created_at desc";
-
-		Connection con = DBConnection.getConnection();
-		if (con == null) {
-			return list;
-		}
-
-		try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+		List<ContactQuery> list = new ArrayList<>();
+		String sql = "SELECT id, name, email, subject, message, created_at FROM tbl_contact WHERE status = 'ACTIVE' ORDER BY created_at ASC";
+		
+		try (Connection con = DBConnection.getConnection();
+			 PreparedStatement ps = con.prepareStatement(sql); 
+			 ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				ContactQuery q = new ContactQuery();
 				q.setId(rs.getInt("id"));
@@ -58,9 +47,20 @@ public class ContactDao {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try { con.close(); } catch (SQLException ignore) { }
 		}
 		return list;
+	}
+
+	// Mark query as resolved
+	public boolean resolveQuery(int id) {
+		String sql = "UPDATE tbl_contact SET status = 'RESOLVED' WHERE id = ?";
+		try (Connection con = DBConnection.getConnection();
+			 PreparedStatement ps = con.prepareStatement(sql)) {
+			ps.setInt(1, id);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

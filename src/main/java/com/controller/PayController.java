@@ -1,7 +1,7 @@
 package com.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,10 +25,7 @@ public class PayController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=UTF-8");
-		PrintWriter out = response.getWriter();
 
 		String ownername = clean(request.getParameter("ownername"));
 		String number = clean(request.getParameter("number"));
@@ -55,20 +52,20 @@ public class PayController extends HttpServlet {
 
 		if (ownername.isEmpty() || number.isEmpty() || bat.isEmpty() || amt.isEmpty() || payMode.isEmpty()
 				|| email.isEmpty() || slotId <= 0) {
-			respond(out, "Booking details are incomplete. Please try again.", "history.back();");
+			request.setAttribute("error", "Booking details are incomplete. Please complete all fields.");
+			request.getRequestDispatcher("SearchSlot.jsp").forward(request, response);
 			return;
 		}
 
-		// Book now = starts immediately, Reserve = starts at the chosen date and time
 		Calendar start = Calendar.getInstance();
 		String bookingType = clean(request.getParameter("booking_type"));
 		String startParam = clean(request.getParameter("start_time"));
 		if ("reserve".equals(bookingType) && !startParam.isEmpty()) {
 			try {
-				// datetime-local sends e.g. 2026-10-14T18:30
 				start.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(startParam));
 			} catch (java.text.ParseException e) {
-				respond(out, "Invalid start date and time.", "history.back();");
+				request.setAttribute("error", "Invalid start date and time format.");
+				request.getRequestDispatcher("SearchSlot.jsp").forward(request, response);
 				return;
 			}
 		}
@@ -87,9 +84,10 @@ public class PayController extends HttpServlet {
 		pay.setEndTime(new Timestamp(end.getTimeInMillis()));
 
 		if (new UserDao().InsertPayData(pay)) {
-			respond(out, "Slot booked successfully", "location='MyBookings.jsp';");
+			response.sendRedirect("MyBookings.jsp?msg=" + URLEncoder.encode("Slot booked successfully!", "UTF-8"));
 		} else {
-			respond(out, "Booking failed. Please try again.", "history.back();");
+			request.setAttribute("error", "Booking could not be finalized. Please try again.");
+			request.getRequestDispatcher("SearchSlot.jsp").forward(request, response);
 		}
 	}
 
@@ -100,12 +98,5 @@ public class PayController extends HttpServlet {
 
 	private static String clean(String v) {
 		return v == null ? "" : v.trim();
-	}
-
-	private static void respond(PrintWriter out, String message, String action) {
-		out.println("<script type=\"text/javascript\">");
-		out.println("alert('" + message + "');");
-		out.println(action);
-		out.println("</script>");
 	}
 }

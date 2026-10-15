@@ -24,6 +24,17 @@
   <link href="css/main.css" rel="stylesheet">
   
   <style>
+  /* Blend the page background without altering layout heights */
+  body, #main, section.contact {
+    background-color: #f8fafc !important;
+  }
+
+  /* Remove only the inline SVG gap beneath the wave */
+  #hero .hero-waves {
+    display: block !important;
+    vertical-align: bottom !important;
+    margin-bottom: -1px !important;
+  }
     .receipt-slip { background: #fff; border: 2px dashed #dbe2ea; border-radius: 8px; padding: 25px; }
     .receipt-header { border-bottom: 2px solid #20c997; padding-bottom: 15px; margin-bottom: 15px; }
     @media print {
@@ -44,7 +55,7 @@
       <defs><path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></defs>
       <g class="wave1"><use xlink:href="#wave-path" x="50" y="3" fill="rgba(255,255,255, .1)"></g>
       <g class="wave2"><use xlink:href="#wave-path" x="50" y="0" fill="rgba(255,255,255, .2)"></g>
-      <g class="wave3"><use xlink:href="#wave-path" x="50" y="9" fill="#fff"></g>
+      <g class="wave3"><use xlink:href="#wave-path" x="50" y="9" fill="#f8fafc"></g>
     </svg>
   </section>
 

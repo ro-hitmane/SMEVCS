@@ -5,47 +5,39 @@
     String cbRole = "GUEST";
 
     if (session.getAttribute("admin") != null
-            || cbPage.contains("adminhome")
-            || cbPage.contains("stations.jsp")
-            || cbPage.contains("managestation")
-            || cbPage.contains("viewslots")
-            || cbPage.contains("stationbookings")
-            || cbPage.contains("bookinghistory")) {
+            || cbPage.contains("adminhome") || cbPage.contains("stations.jsp")
+            || cbPage.contains("managestation") || cbPage.contains("viewslots")
+            || cbPage.contains("stationbookings") || cbPage.contains("bookinghistory")) {
         cbRole = "ADMIN";
-    } else if (session.getAttribute("email") != null
-            || session.getAttribute("user") != null
-            || cbPage.contains("userhome")
-            || cbPage.contains("search.jsp")
-            || cbPage.contains("searchslot")
-            || cbPage.contains("mybookings")
+    } else if (session.getAttribute("email") != null || session.getAttribute("user") != null
+            || cbPage.contains("userhome") || cbPage.contains("search.jsp")
+            || cbPage.contains("searchslot") || cbPage.contains("mybookings")
             || cbPage.contains("payment.jsp")) {
         cbRole = "USER";
     }
 
-    // Extract stationId from current URL if present (e.g. ?stationId=4) so the widget can offer 1-click station context
     String pageStationId = request.getParameter("stationId");
-    if (pageStationId == null || !pageStationId.matches("\\d+")) {
-        pageStationId = "";
-    }
+    if (pageStationId == null || !pageStationId.matches("\\d+")) pageStationId = "";
 %>
-<!-- ======= Plugy Guided Decision-Tree Chatbot Widget ======= -->
+<!-- ======= Conversational Plugy Chatbot Widget ======= -->
 <style>
+/* Move Chatbot FAB to the Bottom-Left */
   .plugy-cb-fab {
     position: fixed;
     bottom: 24px;
-    right: 24px;
-    height: 56px;
-    padding: 0 20px;
+    left: 24px; /* Changed from right: 24px */
+    height: 52px;
+    padding: 0 18px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #01036f 0%, #0205a1 55%, #1acc8d 100%);
+    background: linear-gradient(135deg, #01036f 0%, #0205a1 100%);
     color: #ffffff;
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 10px 28px rgba(1, 3, 111, 0.38);
+    border: none;
+    box-shadow: 0 8px 24px rgba(1, 3, 111, 0.3);
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-family: 'Poppins', 'Open Sans', sans-serif;
-    font-size: 14px;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     z-index: 9999;
@@ -53,352 +45,191 @@
   }
   .plugy-cb-fab:hover {
     transform: translateY(-2px);
-    box-shadow: 0 14px 32px rgba(1, 3, 111, 0.48);
-  }
-  .plugy-cb-fab-bolt {
-    font-size: 18px;
-    line-height: 1;
+    box-shadow: 0 12px 28px rgba(1, 3, 111, 0.4);
   }
 
+  /* Anchor the Chatbot Window to the Bottom-Left when opened */
   .plugy-cb-window {
     position: fixed;
-    bottom: 92px;
-    right: 24px;
-    width: 420px;
-    max-width: calc(100vw - 28px);
-    height: 610px;
-    max-height: calc(100vh - 116px);
-    background: #f8fafc;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.28);
+    bottom: 90px;
+    left: 24px; /* Changed from right: 24px */
+    width: 340px;
+    height: 500px;
+    min-width: 280px;
+    min-height: 380px;
+    max-width: 100vw;
+    max-height: 100vh;
+    background: #f4f6fa;
+    border-radius: 16px;
+    box-shadow: 0 15px 45px rgba(15, 23, 42, 0.25);
     border: 1px solid #cbd5e1;
     display: none;
     flex-direction: column;
-    overflow: hidden;
     z-index: 9999;
-    font-family: 'Poppins', 'Open Sans', sans-serif;
+    font-family: 'Open Sans', sans-serif;
+    resize: both;
+    overflow: hidden;
   }
   .plugy-cb-window.open {
     display: flex;
   }
 
-  /* Header */
+  /* Draggable Header */
   .plugy-cb-header {
-    background: linear-gradient(135deg, #01036f 0%, #0205a1 100%);
+    background: #01036f;
     color: #ffffff;
-    padding: 13px 16px;
+    padding: 10px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: grab; /* Indicates draggability */
+    user-select: none;
     flex-shrink: 0;
+  }
+  .plugy-cb-header:active {
+    cursor: grabbing;
   }
   .plugy-cb-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
-  .plugy-cb-brand-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.14);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
+    gap: 8px;
   }
   .plugy-cb-brand h6 {
     margin: 0;
-    font-size: 14.5px;
+    font-size: 13px;
     font-weight: 700;
-    color: #ffffff;
-    line-height: 1.2;
+    font-family: 'Poppins', sans-serif;
   }
   .plugy-cb-badge {
-    display: inline-block;
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: rgba(26, 204, 141, 0.25);
-    color: #6ee7b7;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    margin-top: 2px;
+    font-size: 9.5px;
+    background: rgba(255,255,255,0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
   }
-  .plugy-cb-header-right {
+  .plugy-cb-header-controls {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 12px;
   }
-  .plugy-cb-lang-group {
-    display: flex;
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    padding: 2px;
-  }
-  .plugy-cb-lang-btn {
+  .plugy-cb-header-btn {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.78);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 7px;
-    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    padding: 0;
   }
-  .plugy-cb-lang-btn.active {
-    background: #1acc8d;
-    color: #01036f;
-  }
-  .plugy-cb-close-btn {
-    background: rgba(255, 255, 255, 0.12);
-    border: none;
-    color: #ffffff;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .plugy-cb-close-btn:hover {
-    background: rgba(255, 255, 255, 0.24);
-  }
+  .plugy-cb-header-btn:hover { color: #ffffff; }
 
-  /* Breadcrumb & Navigation Bar */
-  .plugy-cb-navbar {
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  .plugy-cb-breadcrumb {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: #64748b;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 220px;
-  }
-  .plugy-cb-nav-actions {
-    display: flex;
-    gap: 6px;
-  }
-  .plugy-cb-nav-btn {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    color: #1e293b;
-    border-radius: 7px;
-    padding: 4px 9px;
-    font-size: 11.5px;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.15s ease;
-  }
-  .plugy-cb-nav-btn:hover:not(:disabled) {
-    background: #e2e8f0;
-    border-color: #94a3b8;
-  }
-  .plugy-cb-nav-btn:disabled {
-    opacity: 0.45;
-    cursor: default;
-  }
-  .plugy-cb-nav-home {
-    background: #eff6ff;
-    border-color: #bfdbfe;
-    color: #0205a1;
-  }
-  .plugy-cb-nav-home:hover {
-    background: #dbeafe;
-  }
-
-  /* Scrollable Content Area */
-  .plugy-cb-body {
+  /* Continuous Chat Feed */
+  .plugy-cb-feed {
     flex: 1;
-    padding: 14px;
+    padding: 14px 12px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    scroll-behavior: smooth;
   }
 
-  /* Answer Card */
-  .plugy-cb-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 14px 15px;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  /* Chat Bubbles */
+  .cb-bubble {
+    max-width: 85%;
+    font-size: 12.5px;
+    line-height: 1.45;
+    padding: 9px 12px;
+    word-wrap: break-word;
   }
-  .plugy-cb-card-title {
-    margin: 0 0 6px 0;
-    font-size: 15px;
-    font-weight: 700;
-    color: #0f172a;
-    line-height: 1.35;
+  .cb-user-bubble {
+    align-self: flex-end;
+    background: #0205a1;
+    color: #ffffff;
+    border-radius: 14px 14px 2px 14px;
+    box-shadow: 0 2px 5px rgba(2, 5, 161, 0.15);
   }
-  .plugy-cb-card-reply {
-    margin: 0;
-    font-size: 13px;
-    color: #334155;
-    line-height: 1.55;
-    white-space: pre-wrap;
-  }
-
-  /* Spaced Bullet Items (Fixes Clustered Reply Issue) */
-  .plugy-cb-bullet-list {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0 0 0;
+  .cb-bot-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    align-items: flex-start;
   }
-  .plugy-cb-bullet-item {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-left: 3.5px solid #0205a1;
-    border-radius: 9px;
-    padding: 9px 11px;
-    font-size: 12.5px;
+  .cb-bot-bubble {
+    background: #ffffff;
     color: #1e293b;
-    line-height: 1.5;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px 14px 14px 2px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
   }
-
-  /* Simple Everyday Norm / Translation Callout Box */
-  .plugy-cb-norm-box {
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    border-radius: 12px;
-    padding: 10px 13px;
-    font-size: 12.5px;
-    color: #065f46;
-    line-height: 1.5;
-  }
-
-  /* Actionable Teleport Buttons (Deep Links into Project Pages) */
-  .plugy-cb-actions-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-  }
-  .plugy-cb-action-label {
-    font-size: 11px;
+  .cb-bot-title {
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #64748b;
-    margin-bottom: 2px;
-  }
-  .plugy-cb-action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    border-radius: 11px;
     font-size: 13px;
-    font-weight: 600;
-    text-decoration: none !important;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    color: #0f172a;
+    margin-bottom: 4px;
+    display: block;
   }
-  .plugy-cb-action-btn.style-primary {
-    background: linear-gradient(135deg, #0205a1 0%, #1d4ed8 100%);
-    color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(2, 5, 161, 0.2);
+  .cb-bot-bullets {
+    margin: 6px 0 0 16px;
+    padding: 0;
   }
-  .plugy-cb-action-btn.style-emerald {
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-    color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+  .cb-bot-bullets li {
+    margin-bottom: 4px;
+    font-size: 12px;
+    color: #334155;
   }
-  .plugy-cb-action-btn.style-outline {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    color: #1e293b !important;
-  }
-  .plugy-cb-action-btn:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
-  }
+  .cb-bot-bullets li:last-child { margin-bottom: 0; }
 
-  /* Interactive Guided Question Options */
-  .plugy-cb-options-wrap {
+  /* Action Links (Deep Links inside bubbles) */
+  .cb-actions {
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 6px;
+    margin-top: 8px;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 8px;
   }
-  .plugy-cb-options-header {
+  .cb-action-btn {
+    display: inline-block;
     font-size: 11.5px;
-    font-weight: 700;
-    color: #475569;
-    margin-top: 2px;
+    font-weight: 600;
+    color: #0205a1;
+    text-decoration: none !important;
   }
-  .plugy-cb-option-btn {
+  .cb-action-btn:hover { text-decoration: underline !important; }
+
+  /* Quick-Reply Chips (Only shown on latest bot message) */
+  .cb-chips-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     width: 100%;
-    text-align: left;
+    padding-left: 2px;
+    padding-right: 12px;
+  }
+  .cb-chip {
     background: #ffffff;
     border: 1px solid #cbd5e1;
-    border-radius: 12px;
-    padding: 10px 13px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    color: #334155;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-align: left;
     cursor: pointer;
     transition: all 0.15s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  .plugy-cb-option-btn:hover {
+  .cb-chip:hover {
+    background: #f8fafc;
     border-color: #0205a1;
-    background: #eff6ff;
-    transform: translateX(2px);
-  }
-  .plugy-cb-option-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #1e293b;
-    line-height: 1.35;
-  }
-  .plugy-cb-option-icon {
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-  .plugy-cb-option-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  .plugy-cb-option-badge {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: #e0f2fe;
-    color: #0369a1;
-  }
-  .plugy-cb-option-arrow {
-    color: #64748b;
-    font-size: 16px;
-    font-weight: 700;
+    color: #0205a1;
   }
 
-  /* Footer Quick Area/Keyword Search */
+  /* Input Footer */
   .plugy-cb-footer {
-    padding: 9px 12px;
+    padding: 8px 10px;
     background: #ffffff;
     border-top: 1px solid #e2e8f0;
     display: flex;
@@ -410,109 +241,105 @@
     flex: 1;
     border: 1px solid #cbd5e1;
     border-radius: 999px;
-    padding: 7px 13px;
-    font-size: 12.5px;
+    padding: 6px 12px;
+    font-size: 12px;
     outline: none;
-    color: #1e293b;
   }
   .plugy-cb-footer input:focus {
     border-color: #0205a1;
   }
   .plugy-cb-send {
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: none;
     background: #1acc8d;
     color: #ffffff;
-    font-size: 14px;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     flex-shrink: 0;
-  }
-  .plugy-cb-send:hover {
-    background: #15a874;
   }
 </style>
 
-<button type="button" class="plugy-cb-fab" id="plugyCbToggle" aria-label="Open Plugy EV Assistant">
+<button type="button" class="plugy-cb-fab" id="plugyCbToggle" aria-label="Open Assistant">
   <span class="plugy-cb-fab-bolt">&#9889;</span>
-  <span>EV Help &amp; Guide</span>
+  <span>Assistant</span>
 </button>
 
 <div class="plugy-cb-window" id="plugyCbWindow" data-role="<%= cbRole %>" data-station="<%= pageStationId %>">
-  <!-- Header -->
-  <div class="plugy-cb-header">
+  
+  <!-- Draggable Header -->
+  <div class="plugy-cb-header" id="plugyCbHeader" title="Drag to move">
     <div class="plugy-cb-brand">
-      <div class="plugy-cb-brand-icon">&#9889;</div>
+      <span style="font-size: 16px;">&#9889;</span>
       <div>
-        <h6>Plugy Assistant</h6>
-        <span class="plugy-cb-badge" id="plugyCbBadge"><%= cbRole %> GUIDE</span>
+        <h6>Plugy Bot</h6>
+        <span class="plugy-cb-badge" id="plugyCbBadge"><%= cbRole %></span>
       </div>
     </div>
-    <div class="plugy-cb-header-right">
-      <div class="plugy-cb-lang-group" title="Switch Simple Explanation Language">
-        <button type="button" class="plugy-cb-lang-btn active" data-lang="en">EN</button>
-        <button type="button" class="plugy-cb-lang-btn" data-lang="hi">हिं</button>
-        <button type="button" class="plugy-cb-lang-btn" data-lang="mr">मरा</button>
-      </div>
-      <button type="button" class="plugy-cb-close-btn" id="plugyCbClose" title="Minimize">&#10005;</button>
+    <div class="plugy-cb-header-controls">
+      <button type="button" class="plugy-cb-header-btn" id="plugyCbRestart" title="Restart Chat">&#8635;</button>
+      <button type="button" class="plugy-cb-header-btn" id="plugyCbClose" title="Minimize">&#10005;</button>
     </div>
   </div>
 
-  <!-- Breadcrumb & Navigation Bar -->
-  <div class="plugy-cb-navbar">
-    <div class="plugy-cb-breadcrumb" id="plugyCbBreadcrumb" title="Current Path">🏠 Main Menu</div>
-    <div class="plugy-cb-nav-actions">
-      <button type="button" class="plugy-cb-nav-btn" id="plugyCbBackBtn" disabled>
-        <span>&#8592;</span> <span id="plugyCbBackText">Back</span>
-      </button>
-      <button type="button" class="plugy-cb-nav-btn plugy-cb-nav-home" id="plugyCbHomeBtn" title="Return to Main Menu">
-        <span>&#8962;</span> <span id="plugyCbHomeText">Menu</span>
-      </button>
-    </div>
-  </div>
+  <!-- Scrolling Chat Feed -->
+  <div class="plugy-cb-feed" id="plugyCbFeed"></div>
 
-  <!-- Structured Card Body -->
-  <div class="plugy-cb-body" id="plugyCbBody"></div>
-
-  <!-- Optional Quick Search Bar -->
+  <!-- Bottom Input Bar -->
   <form class="plugy-cb-footer" id="plugyCbForm" autocomplete="off">
-    <input type="text" id="plugyCbInput" maxlength="120" placeholder="Or type an area (e.g. Wakad, Hadapsar, CCS2)..." />
-    <button type="submit" class="plugy-cb-send" title="Search">&#10148;</button>
+    <input type="text" id="plugyCbInput" maxlength="120" placeholder="Type a question or area..." />
+    <button type="submit" class="plugy-cb-send" title="Send">&#10148;</button>
   </form>
+
 </div>
 
 <script>
 (function() {
-  var STORAGE_KEY = 'plugy_guided_cb_v4';
+  var STORAGE_KEY = 'plugy_chat_v5';
   var ENDPOINT = '<%= request.getContextPath() %>/ChatbotController';
   var win = document.getElementById('plugyCbWindow');
-  var badgeEl = document.getElementById('plugyCbBadge');
-  var breadcrumbEl = document.getElementById('plugyCbBreadcrumb');
+  var header = document.getElementById('plugyCbHeader');
+  var feedEl = document.getElementById('plugyCbFeed');
+  var inputEl = document.getElementById('plugyCbInput');
   var role = win.getAttribute('data-role') || 'GUEST';
   var pageStationId = win.getAttribute('data-station') || '';
   var currentPage = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1) || 'index.jsp';
 
-  var toggleBtn = document.getElementById('plugyCbToggle');
-  var closeBtn = document.getElementById('plugyCbClose');
-  var backBtn = document.getElementById('plugyCbBackBtn');
-  var homeBtn = document.getElementById('plugyCbHomeBtn');
-  var backTextEl = document.getElementById('plugyCbBackText');
-  var homeTextEl = document.getElementById('plugyCbHomeText');
-  var bodyEl = document.getElementById('plugyCbBody');
-  var formEl = document.getElementById('plugyCbForm');
-  var inputEl = document.getElementById('plugyCbInput');
-  var langBtns = document.querySelectorAll('.plugy-cb-lang-btn');
+  // --- 1. DRAG & DROP LOGIC ---
+  var isDragging = false;
+  var startX, startY, initialLeft, initialTop;
 
-  var UI_LABELS = {
-    en: { back: 'Back', home: 'Menu', choose: 'Choose a question or station below:', actionHeader: 'Quick Page Shortcuts:', placeholder: 'Or type an area (e.g. Wakad, Hadapsar, CCS2)...' },
-    hi: { back: 'पीछे', home: 'मेनू', choose: 'नीचे एक प्रश्न या स्टेशन चुनें:', actionHeader: 'सीधे पेज पर जाएँ:', placeholder: 'या एरिया का नाम लिखें (जैसे Wakad, Hadapsar)...' },
-    mr: { back: 'मागे', home: 'मेनू', choose: 'खालीलपैकी एक प्रश्न किंवा स्टेशन निवडा:', actionHeader: 'थेट पेजवर जा:', placeholder: 'किंवा परिसराचे नाव टाका (उदा. Wakad, Hadapsar)...' }
-  };
+  header.addEventListener('mousedown', function(e) {
+    if (e.target.tagName.toLowerCase() === 'button') return;
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    var rect = win.getBoundingClientRect();
+    initialLeft = rect.left;
+    initialTop = rect.top;
+    win.style.bottom = 'auto';
+    win.style.right = 'auto';
+    win.style.left = initialLeft + 'px';
+    win.style.top = initialTop + 'px';
+  });
 
+  document.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    var dx = e.clientX - startX;
+    var dy = e.clientY - startY;
+    win.style.left = (initialLeft + dx) + 'px';
+    win.style.top = (initialTop + dy) + 'px';
+  });
+
+  document.addEventListener('mouseup', function() {
+    isDragging = false;
+  });
+
+
+  // --- 2. STATE & RENDER LOGIC ---
   function loadState() {
     try {
       var raw = sessionStorage.getItem(STORAGE_KEY);
@@ -520,197 +347,128 @@
       var parsed = JSON.parse(raw);
       if (parsed.role !== role) return null;
       return parsed;
-    } catch (e) {
-      return null;
-    }
+    } catch (e) { return null; }
   }
 
   function saveState() {
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {}
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
   }
 
   var state = loadState() || {
     role: role,
     isOpen: false,
-    lang: 'en',
-    historyStack: [],
-    currentData: null
+    chatHistory: [] // Array of { sender: 'user'|'bot', text: '...', data: { ... } }
   };
 
-  function updateLangUI() {
-    var l = state.lang || 'en';
-    langBtns.forEach(function(btn) {
-      if (btn.getAttribute('data-lang') === l) btn.classList.add('active');
-      else btn.classList.remove('active');
-    });
-    var labels = UI_LABELS[l] || UI_LABELS.en;
-    backTextEl.textContent = labels.back;
-    homeTextEl.textContent = labels.home;
-    inputEl.placeholder = labels.placeholder;
-  }
-
-  function renderCurrentNode() {
+  function renderFeed() {
     if (state.isOpen) win.classList.add('open');
     else win.classList.remove('open');
 
-    updateLangUI();
+    feedEl.innerHTML = '';
 
-    if (badgeEl && state.role) {
-      badgeEl.textContent = state.role + ' GUIDE';
-    }
+    state.chatHistory.forEach(function(msg, index) {
+      var isLatestBotMessage = (index === state.chatHistory.length - 1 && msg.sender === 'bot');
 
-    var d = state.currentData;
-    if (!d) return;
+      if (msg.sender === 'user') {
+        var uWrap = document.createElement('div');
+        uWrap.className = 'cb-bubble cb-user-bubble';
+        uWrap.textContent = msg.text;
+        feedEl.appendChild(uWrap);
+      } 
+      else {
+        var bGroup = document.createElement('div');
+        bGroup.className = 'cb-bot-group';
 
-    // Enable Back button if historyStack has items or node is not ROOT
-    backBtn.disabled = (d.nodeId === 'ROOT' && state.historyStack.length === 0);
-    breadcrumbEl.textContent = d.breadcrumb || '🏠 Main Menu';
-    breadcrumbEl.title = d.breadcrumb || '🏠 Main Menu';
+        var bWrap = document.createElement('div');
+        bWrap.className = 'cb-bubble cb-bot-bubble';
 
-    bodyEl.innerHTML = '';
-    var labels = UI_LABELS[state.lang] || UI_LABELS.en;
-
-    // 1. Main Answer Card (Title + Intro + Spaced Bullet Cards)
-    var card = document.createElement('div');
-    card.className = 'plugy-cb-card';
-
-    if (d.title) {
-      var h = document.createElement('h5');
-      h.className = 'plugy-cb-card-title';
-      h.textContent = d.title;
-      card.appendChild(h);
-    }
-
-    if (d.reply) {
-      var p = document.createElement('p');
-      p.className = 'plugy-cb-card-reply';
-      p.textContent = d.reply;
-      card.appendChild(p);
-    }
-
-    if (d.bullets && d.bullets.length > 0) {
-      var ul = document.createElement('ul');
-      ul.className = 'plugy-cb-bullet-list';
-      d.bullets.forEach(function(bText) {
-        var li = document.createElement('li');
-        li.className = 'plugy-cb-bullet-item';
-        li.textContent = bText;
-        ul.appendChild(li);
-      });
-      card.appendChild(ul);
-    }
-    bodyEl.appendChild(card);
-
-    // 2. Simple Everyday Meaning / Translation Box
-    var normText = d.simpleNorm;
-    if (state.lang === 'hi' && d.normHi) normText = d.normHi;
-    else if (state.lang === 'mr' && d.normMr) normText = d.normMr;
-
-    if (normText) {
-      var normBox = document.createElement('div');
-      normBox.className = 'plugy-cb-norm-box';
-      normBox.textContent = normText;
-      bodyEl.appendChild(normBox);
-    }
-
-    // 3. Actionable Page Shortcut Buttons
-    if (d.actions && d.actions.length > 0) {
-      var actWrap = document.createElement('div');
-      actWrap.className = 'plugy-cb-actions-wrap';
-
-      var actHdr = document.createElement('div');
-      actHdr.className = 'plugy-cb-action-label';
-      actHdr.textContent = labels.actionHeader;
-      actWrap.appendChild(actHdr);
-
-      d.actions.forEach(function(a) {
-        var link = document.createElement('a');
-        var sClass = 'style-primary';
-        if (a.style === 'emerald') sClass = 'style-emerald';
-        else if (a.style === 'outline') sClass = 'style-outline';
-
-        link.className = 'plugy-cb-action-btn ' + sClass;
-        link.href = a.url;
-
-        var span = document.createElement('span');
-        span.textContent = a.label;
-        var arrow = document.createElement('span');
-        arrow.innerHTML = '&#8594;';
-
-        link.appendChild(span);
-        link.appendChild(arrow);
-        actWrap.appendChild(link);
-      });
-      bodyEl.appendChild(actWrap);
-    }
-
-    // 4. Nested Guided Question Options
-    if (d.options && d.options.length > 0) {
-      var optWrap = document.createElement('div');
-      optWrap.className = 'plugy-cb-options-wrap';
-
-      var optHdr = document.createElement('div');
-      optHdr.className = 'plugy-cb-options-header';
-      optHdr.textContent = labels.choose;
-      optWrap.appendChild(optHdr);
-
-      d.options.forEach(function(o) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'plugy-cb-option-btn';
-
-        var left = document.createElement('div');
-        left.className = 'plugy-cb-option-left';
-
-        var ic = document.createElement('span');
-        ic.className = 'plugy-cb-option-icon';
-        ic.textContent = o.icon || '•';
-
-        var lb = document.createElement('span');
-        lb.textContent = o.label;
-
-        left.appendChild(ic);
-        left.appendChild(lb);
-
-        var right = document.createElement('div');
-        right.className = 'plugy-cb-option-right';
-
-        if (o.badge) {
-          var bg = document.createElement('span');
-          bg.className = 'plugy-cb-option-badge';
-          bg.textContent = o.badge;
-          right.appendChild(bg);
+        if (msg.data.title) {
+          var t = document.createElement('span');
+          t.className = 'cb-bot-title';
+          t.textContent = msg.data.title;
+          bWrap.appendChild(t);
         }
 
-        var chev = document.createElement('span');
-        chev.className = 'plugy-cb-option-arrow';
-        chev.innerHTML = '&#8250;';
-        right.appendChild(chev);
+        if (msg.data.reply) {
+          var r = document.createElement('span');
+          r.textContent = msg.data.reply;
+          bWrap.appendChild(r);
+        }
 
-        btn.appendChild(left);
-        btn.appendChild(right);
+        if (msg.data.bullets && msg.data.bullets.length > 0) {
+          var ul = document.createElement('ul');
+          ul.className = 'cb-bot-bullets';
+          msg.data.bullets.forEach(function(bText) {
+            var li = document.createElement('li');
+            li.textContent = bText;
+            ul.appendChild(li);
+          });
+          bWrap.appendChild(ul);
+        }
 
-        btn.addEventListener('click', function() {
-          navigateToNode(o.nodeId, true);
-        });
-        optWrap.appendChild(btn);
-      });
-      bodyEl.appendChild(optWrap);
-    }
+        if (msg.data.actions && msg.data.actions.length > 0) {
+          var acts = document.createElement('div');
+          acts.className = 'cb-actions';
+          msg.data.actions.forEach(function(a) {
+            var link = document.createElement('a');
+            link.className = 'cb-action-btn';
+            link.href = a.url;
+            link.innerHTML = a.label + ' &rarr;';
+            acts.appendChild(link);
+          });
+          bWrap.appendChild(acts);
+        }
 
-    bodyEl.scrollTop = 0;
+        bGroup.appendChild(bWrap);
+
+        // ONLY render chips for the very latest bot message to prevent UI clutter
+        if (isLatestBotMessage && msg.data.options && msg.data.options.length > 0) {
+          var chipsWrap = document.createElement('div');
+          chipsWrap.className = 'cb-chips-wrapper';
+          msg.data.options.forEach(function(o) {
+            var btn = document.createElement('button');
+            btn.className = 'cb-chip';
+            
+            var left = document.createElement('span');
+            left.textContent = (o.icon ? o.icon + ' ' : '') + o.label;
+            btn.appendChild(left);
+
+            var right = document.createElement('span');
+            right.style.color = '#94a3b8';
+            right.innerHTML = '&rsaquo;';
+            btn.appendChild(right);
+
+            btn.onclick = function() {
+              pushUserMessage(o.label);
+              fetchNode(o.nodeId);
+            };
+            chipsWrap.appendChild(btn);
+          });
+          bGroup.appendChild(chipsWrap);
+        }
+
+        feedEl.appendChild(bGroup);
+      }
+    });
+
+    feedEl.scrollTop = feedEl.scrollHeight;
   }
 
-  function navigateToNode(targetNodeId, pushHistory) {
-    if (pushHistory && state.currentData && state.currentData.nodeId) {
-      state.historyStack.push(state.currentData.nodeId);
-      if (state.historyStack.length > 20) state.historyStack.shift();
-    }
+  // --- 3. COMMUNICATION LOGIC ---
+  function pushUserMessage(text) {
+    if (!text.trim()) return;
+    state.chatHistory.push({ sender: 'user', text: text.trim() });
+    saveState();
+    renderFeed();
+  }
 
+  function fetchNode(nodeId, isSearch) {
     var params = new URLSearchParams();
-    params.append('nodeId', targetNodeId);
+    if (isSearch) {
+      params.append('message', nodeId);
+    } else {
+      params.append('nodeId', nodeId);
+    }
     params.append('currentPage', currentPage);
     if (pageStationId) params.append('pageStationId', pageStationId);
 
@@ -719,115 +477,55 @@
       headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
       body: params.toString()
     })
-    .then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
+    .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.role) state.role = data.role;
-      state.currentData = data;
+      state.chatHistory.push({ sender: 'bot', data: data });
       saveState();
-      renderCurrentNode();
+      renderFeed();
     })
     .catch(function(err) {
-      state.currentData = {
-        nodeId: 'ROOT',
-        parentId: '',
-        breadcrumb: '🏠 Main Menu',
-        title: '⚠️ Tomcat Restart Required',
-        reply: 'ChatbotController returned ' + (err.message || 'an error') + '.',
-        bullets: ['In Eclipse, right-click your Tomcat Server in the Servers tab and click Restart so the updated servlet classes load into memory.'],
-        simpleNorm: 'Once Tomcat restarts, click Main Menu above.',
-        options: [],
-        actions: []
-      };
-      renderCurrentNode();
+      state.chatHistory.push({
+        sender: 'bot',
+        data: { title: 'Network Error', reply: 'Could not connect. Ensure Tomcat is running.', bullets: [], actions: [], options: [] }
+      });
+      renderFeed();
     });
   }
 
-  function submitQuickSearch(queryText) {
-    var trimmed = (queryText || '').trim();
-    if (!trimmed) return;
-
-    if (state.currentData && state.currentData.nodeId) {
-      state.historyStack.push(state.currentData.nodeId);
-    }
-    inputEl.value = '';
-
-    var params = new URLSearchParams();
-    params.append('message', trimmed);
-    params.append('currentPage', currentPage);
-    if (pageStationId) params.append('pageStationId', pageStationId);
-
-    fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-      body: params.toString()
-    })
-    .then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(data) {
-      if (data.role) state.role = data.role;
-      state.currentData = data;
-      saveState();
-      renderCurrentNode();
-    })
-    .catch(function() {
-      navigateToNode('ROOT', false);
-    });
-  }
-
-  toggleBtn.addEventListener('click', function() {
+  // --- 4. EVENT LISTENERS ---
+  document.getElementById('plugyCbToggle').onclick = function() {
     state.isOpen = !state.isOpen;
-    if (state.isOpen && !state.currentData) {
-      navigateToNode('ROOT', false);
+    if (state.isOpen && state.chatHistory.length === 0) {
+      fetchNode('ROOT', false);
     } else {
-      saveState();
-      renderCurrentNode();
+      renderFeed();
     }
-  });
+  };
 
-  closeBtn.addEventListener('click', function() {
+  document.getElementById('plugyCbClose').onclick = function() {
     state.isOpen = false;
     saveState();
-    renderCurrentNode();
-  });
+    renderFeed();
+  };
 
-  backBtn.addEventListener('click', function() {
-    if (state.historyStack.length > 0) {
-      var prev = state.historyStack.pop();
-      navigateToNode(prev, false);
-    } else if (state.currentData && state.currentData.parentId) {
-      navigateToNode(state.currentData.parentId, false);
-    } else {
-      navigateToNode('ROOT', false);
-    }
-  });
+  document.getElementById('plugyCbRestart').onclick = function() {
+    state.chatHistory = [];
+    saveState();
+    fetchNode('ROOT', false);
+  };
 
-  homeBtn.addEventListener('click', function() {
-    state.historyStack = [];
-    navigateToNode('ROOT', false);
-  });
-
-  langBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      state.lang = btn.getAttribute('data-lang') || 'en';
-      saveState();
-      renderCurrentNode();
-    });
-  });
-
-  formEl.addEventListener('submit', function(e) {
+  document.getElementById('plugyCbForm').onsubmit = function(e) {
     e.preventDefault();
-    submitQuickSearch(inputEl.value);
-  });
+    var val = inputEl.value;
+    inputEl.value = '';
+    if (val.trim()) {
+      pushUserMessage(val);
+      fetchNode(val, true); // Search triggers the quick-search logic in controller
+    }
+  };
 
-  if (state.currentData) {
-    renderCurrentNode();
-  } else {
-    updateLangUI();
-  }
+  // Initial render
+  if (state.isOpen) renderFeed();
+
 })();
 </script>

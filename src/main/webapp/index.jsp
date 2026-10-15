@@ -122,13 +122,13 @@
               <div class="email">
                 <i class="bi bi-envelope"></i>
                 <h4>Email:</h4>
-                <p>support@plugy.com</p>
+                <p>rohit.mane1203@gmail.com</p>
               </div>
 
               <div class="phone">
                 <i class="bi bi-phone"></i>
                 <h4>Call:</h4>
-                <p>+91 20 2550 0000</p>
+                <p>+91 77097 73703</p>
               </div>
             </div>
           </div>

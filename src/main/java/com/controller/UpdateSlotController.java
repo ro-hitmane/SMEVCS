@@ -1,8 +1,7 @@
 package com.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
+import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,10 +17,7 @@ public class UpdateSlotController extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=UTF-8");
-		PrintWriter out = response.getWriter();
 
 		int slotId;
 		int stationId;
@@ -43,7 +39,7 @@ public class UpdateSlotController extends HttpServlet {
 		if (slotLabel.isEmpty() || vehicleType.isEmpty() || chargerType.isEmpty() || status.isEmpty()
 				|| slotLabel.length() > 50 || vehicleType.length() > 50 || chargerType.length() > 50
 				|| status.length() > 20) {
-			respond(out, "Please fill in all the slot details correctly", back);
+			response.sendRedirect(back + "&error=" + URLEncoder.encode("Please fill in all the slot details correctly", "UTF-8"));
 			return;
 		}
 
@@ -56,9 +52,9 @@ public class UpdateSlotController extends HttpServlet {
 		slot.setStatus(status);
 
 		if (new AdminDao().updateSlot(slot)) {
-			respond(out, "Slot updated successfully", back);
+			response.sendRedirect(back + "&msg=" + URLEncoder.encode("Slot updated successfully", "UTF-8"));
 		} else {
-			respond(out, "Failed to update slot", back);
+			response.sendRedirect(back + "&error=" + URLEncoder.encode("Failed to update slot", "UTF-8"));
 		}
 	}
 
@@ -69,12 +65,5 @@ public class UpdateSlotController extends HttpServlet {
 
 	private static String clean(String v) {
 		return v == null ? "" : v.trim();
-	}
-
-	private static void respond(PrintWriter out, String message, String target) {
-		out.println("<script type=\"text/javascript\">");
-		out.println("alert('" + message + "');");
-		out.println("location='" + target + "';");
-		out.println("</script>");
 	}
 }

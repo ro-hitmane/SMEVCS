@@ -27,15 +27,8 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css?v=2" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <!-- =======================================================
-  * Template Name: Bootslander - v4.7.0
-  * Template URL: https://bootstrapmade.com/bootslander-free-bootstrap-landing-page-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
-
-  <!-- Login-only extras; card, inputs and button styles come from style.css -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
   <style>
     .contact .login-form .login-badge {
       width: 64px;
@@ -97,43 +90,28 @@
       color: #3f43fd;
     }
   </style>
-
 </head>
 
 <body>
 
-    <jsp:include page="nav_index.jsp" />
+  <jsp:include page="nav_index.jsp" />
 
   <!-- ======= Hero Section ======= -->
   <section id="hero">
-
     <div class="container">
-      <div class="row justify-content-between">
-       
-       
-      </div>
+      <div class="row justify-content-between"></div>
     </div>
-
     <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28 " preserveAspectRatio="none">
       <defs>
         <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z">
       </defs>
-      <g class="wave1">
-        <use xlink:href="#wave-path" x="50" y="3" fill="rgba(255,255,255, .1)">
-      </g>
-      <g class="wave2">
-        <use xlink:href="#wave-path" x="50" y="0" fill="rgba(255,255,255, .2)">
-      </g>
-      <g class="wave3">
-        <use xlink:href="#wave-path" x="50" y="9" fill="#fff">
-      </g>
+      <g class="wave1"><use xlink:href="#wave-path" x="50" y="3" fill="rgba(255,255,255, .1)"></g>
+      <g class="wave2"><use xlink:href="#wave-path" x="50" y="0" fill="rgba(255,255,255, .2)"></g>
+      <g class="wave3"><use xlink:href="#wave-path" x="50" y="9" fill="#fff"></g>
     </svg>
-
-  </section><!-- End Hero -->
+  </section>
 
   <main id="main">
-
-    <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact">
       <div class="container">
 
@@ -151,6 +129,12 @@
                 <h3>Welcome back</h3>
                 <p>Sign in to manage slots, bookings and queries.</p>
               </div>
+
+              <% if (request.getAttribute("error") != null) { %>
+                <div class="alert alert-danger text-center" role="alert" style="font-size: 14px; border-radius: 8px;">
+                  <%= request.getAttribute("error") %>
+                </div>
+              <% } %>
 
               <div class="form-group">
                 <label for="email">Email</label>
@@ -185,24 +169,16 @@
 
       </div>
     </section>
-    
-    <!-- End Section -->
-
   </main>
-  <!-- End #main -->
 
   <!-- ======= Footer ======= -->
   <footer id="footer">
-    
-
     <div class="container">
       <div class="copyright">
         &copy; Copyright <strong><span>Plugy 2021</span></strong>. All Rights Reserved
       </div>
-      
     </div>
   </footer>
-  <!-- End Footer -->
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
   <div id="preloader"></div>
@@ -216,7 +192,6 @@
 
   <!-- self Main JS File -->
   <script src="assets/js/main.js?v=2"></script>
-
 
   <script>
     (function () {
@@ -233,5 +208,4 @@
   </script>
 
 </body>
-
 </html>

@@ -1,8 +1,7 @@
 package com.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
+import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,10 +21,7 @@ public class CreateStationController extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=UTF-8");
-		PrintWriter out = response.getWriter();
 
 		String name = clean(request.getParameter("stationName"));
 		String address = clean(request.getParameter("address"));
@@ -36,10 +32,8 @@ public class CreateStationController extends HttpServlet {
 		if (country.isEmpty()) country = "India";
 
 		if (name.isEmpty() || address.isEmpty() || area.isEmpty() || city.isEmpty() || state.isEmpty()) {
-			out.println("<script type=\"text/javascript\">");
-			out.println("alert('Please fill in all the station details');");
-			out.println("location='Stations.jsp';");
-			out.println("</script>");
+			request.setAttribute("error", "Please fill in all the station details.");
+			request.getRequestDispatcher("Stations.jsp").forward(request, response);
 			return;
 		}
 
@@ -52,15 +46,10 @@ public class CreateStationController extends HttpServlet {
 		station.setCountry(country);
 
 		if (new AdminDao().addStation(station)) {
-			out.println("<script type=\"text/javascript\">");
-			out.println("alert('Station created successfully');");
-			out.println("location='Stations.jsp';");
-			out.println("</script>");
+			response.sendRedirect("Stations.jsp?msg=" + URLEncoder.encode("Station created successfully", "UTF-8"));
 		} else {
-			out.println("<script type=\"text/javascript\">");
-			out.println("alert('Failed to create station');");
-			out.println("location='Stations.jsp';");
-			out.println("</script>");
+			request.setAttribute("error", "Failed to create station. Please check your connection or database.");
+			request.getRequestDispatcher("Stations.jsp").forward(request, response);
 		}
 	}
 

@@ -78,61 +78,78 @@ Ensure you have the following environments installed on your local machine:
 - ![Tomcat](https://img.shields.io/badge/Server-Apache_Tomcat_v9+-F8DC75?style=flat-square&logo=apache-tomcat&logoColor=black)
 - ![Database](https://img.shields.io/badge/Database-MySQL_-4479A1?style=flat-square&logo=mysql&logoColor=white)
 
-### 📥 Step 0: Download Archive
 
-Download the attached `.war` & `.sql` file from the **Assets** section of the Git release.
+### ⚙️ Workspace Setup & Deployment Guide
+
+Follow the visual workflow below to import, provision, and deploy the application locally inside Eclipse IDE.
 
 ---
 
-### ⚙️ Eclipse IDE Setup
+#### 📥 Phase 1: Import Application Source
 
-**Step 1: Import the Project**
+Choose **Option A** to clone the version-controlled repository directly, or **Option B** to deploy from a packaged `.war` distribution.
 
-1. In Project Explorer Click **File** → **Import...**
-2. Expand the **Web** folder.
-3. Select **WAR file** and click **Next**.
-4. Click **Browse...** to select your `.war` file.
-5. Set your web project name and click **Finish**.
+##### 🔹 Option A: Clone via Git Repository (Recommended)
+1. 📋 **Copy Repository URL:** Copy the HTTPS clone URL from the repository homepage.
+2. 🗂️ **Open Smart Import:** In Eclipse, navigate to **File** ➔ **Import...**
+3. 📦 **Select Git Provider:** Expand **Git** ➔ select **Projects from Git (with smart import)** ➔ click **Next**.
+4. 🌐 **Select URI Source:** Choose **Clone URI** ➔ click **Next**.
+5. 🔐 **Configure Authentication:** Eclipse will auto-populate the connection fields:
+   * **URI:** Verify the cloned repository URL.
+   * **User:** Your GitHub username.
+   * **Password:** Enter a GitHub **Personal Access Token (PAT)** configured with `repo` scope permissions.
+6. 🌿 **Select Branch:** Click **Next** ➔ select `main` branch ➔ define your local directory path.
+7. 🚀 **Finish:** Click **Finish** to initialize and import the workspace project.
 
-**Step 2: Open the Servers View**
+##### 🔹 Option B: Import from `.war` Distribution
+1. 💾 **Download Assets:** Retrieve the `.war` package and `.sql` dump from the repository **Releases** tab.
+2. 🗂️ **Open Import Wizard:** In Eclipse, navigate to **File** ➔ **Import...**
+3. 📦 **Select Archive Type:** Expand **Web** ➔ select **WAR file** ➔ click **Next**.
+4. 📂 **Select Target Archive:** Click **Browse...** to specify your downloaded `.war` file.
+5. 🏷️ **Name Project:** Verify or enter the **Web project** name (`SMEVCS`).
+6. ⚠️ **Skip EAR Option:** Leave **Add project to an EAR** unchecked ➔ click **Finish**.
 
-1. Go to the top menu: **Window** → **Show View** → **Servers**.
-   _(If not listed there, click **Other...**, expand **Server**, select **Servers**, and click **Open**)._
-2. Look at the bottom panel where the **Servers** tab appeared.
+---
 
-**Step 3: Reconfigure Apache Tomcat**
+#### 🗄️ Phase 2: Database Initialization & Connection
 
-1. In the **Servers** tab, click the blue link: _No servers are available. Click this link to create a new server..._
-2. In the wizard, expand the **Apache** folder.
-3. Select your Tomcat version (e.g., **Tomcat v9.0** or **Tomcat v10.1**). Click **Next**.
-4. Next to **Tomcat installation directory**, click **Browse...** and select the folder where Tomcat is installed.
-5. Click **Finish**.
+1. 🟢 **Start MySQL Service:** Launch **MySQL** via XAMPP Control Panel or your native system service.
+2. 🌐 **Open Database Client:** Navigate to **phpMyAdmin** (`http://localhost/phpmyadmin`) or open the MySQL CLI terminal.
+3. 📜 **Execute Database Schema:** Import or execute the provided SQL dump (`smevcs.sql`):
+   ```sql
+   CREATE DATABASE IF NOT EXISTS smevcs;
+   USE smevcs;
+   1. 🔧 **Configure Connection Class:**
+   * In **Project Explorer**, navigate to `src` ➔ `com.connection` ➔ `DBConnection.java`.
+   * Verify your local credentials match:
+     ```java
+     public static String DBName = "smevcs";
+     public static String DBUSER = "root";
+     public static String DBPASSWORD = ""; // Default empty string for standard local XAMPP setups
+     ```
 
-**Step 4: Add the Project to the Server**
+2. 📦 **Verify JDBC Driver:** Confirm that the MySQL connector (`mysql-connector-*.jar`) exists inside `WebContent/WEB-INF/lib/` (or `src/main/webapp/WEB-INF/lib/`).
 
-1. In the **Servers** tab, right-click the server you just created.
-2. Select **Add and Remove...**
-3. Select your project in the **Available** box on the left, click **Add >** to move it to the **Configured** box on the right.
-4. Click **Finish**.
+---
 
-**Step 5: Verify the Database Code**
-Make sure the database connection file retained the working configuration:
+#### 🖥️ Phase 3: Servlet Container (Apache Tomcat) Configuration
 
-1. In **Project Explorer**, expand the project → `src` → package `com.connection` → open `DBConnection.java`.
-2. Ensure the following credentials match your local database:
-   ```java
-   DBName = "smevcs";
-   DBUSER = "root";
-   DBPASSWORD = "";
-   ```
-   import `smevcs.sql` inside db.
-3. Also check inside `WebContent/WEB-INF/lib` (or `src/main/webapp/WEB-INF/lib`) to confirm your **MySQL Connector JAR** (`mysql-connector-*.jar`) is present.
+1. 🧭 **Open Servers Panel:** Navigate to **Window** ➔ **Show View** ➔ **Servers** (or **Window** ➔ **Show View** ➔ **Other...** ➔ **Server** ➔ **Servers**).
+2. ➕ **Create Server Runtime:** Click the link: *No servers are available. Click this link to create a new server...*
+3. 🏷️ **Select Server Version:** Expand **Apache** ➔ choose **Tomcat v9.0 Server** ➔ click **Next**.
+4. 📁 **Specify Server Home:** Click **Browse...** to select your local Tomcat installation directory ➔ select your installed JDK/JRE runtime ➔ click **Finish**.
+5. 🔗 **Bind Project Runtime Facet:**
+   * Right-click the project root in **Project Explorer** ➔ **Properties**.
+   * Select **Targeted Runtimes** from the left navigation panel.
+   * Check **Apache Tomcat v9.0** ➔ click **Apply and Close**.
 
-**Step 6: Start and Run**
+---
 
-1. Ensure **MySQL** is actively running in your XAMPP/MAMP Control Panel.
-2. In Eclipse's **Servers** tab, right-click the server and click **Start**.
-3. Open your browser and navigate to your application URL:
-   ```text
-   http://localhost:8080/SMEVCS/
-   ```
+#### 🚀 Phase 4: Artifact Deployment & Execution
+
+1. 🔄 **Deploy Project:** In the **Servers** panel, right-click **Tomcat v9.0** ➔ select **Add and Remove...**
+2. ➡️ **Add to Configured List:** Select `SMEVCS` under **Available** ➔ click **Add >** to move it to **Configured** ➔ click **Finish**.
+3. ▶️ **Launch Server:** Right-click the server node ➔ select **Start** (or launch via Debug mode).
+4. 🔍 **Verify Console Logs:** Monitor the Eclipse **Console** tab to ensure the server starts on port `8080` without database or servlet mapping exceptions.
+5. 🌐 **Launch Web App:** Open your preferred browser and navigate to:
+   ``http://localhost:8080/SMEVCS/``

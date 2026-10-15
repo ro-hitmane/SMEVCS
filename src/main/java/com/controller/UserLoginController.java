@@ -1,8 +1,6 @@
 package com.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,60 +8,63 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.bean.User;
-import com.dao.UserDao;
+import com.dao.UserAuthDao;
 
 @WebServlet("/UserLoginController")
 public class UserLoginController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public UserLoginController() {
-		super();
-	}
+    public UserLoginController() {
+        super();
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		response.setContentType("text/html;charset=UTF-8");
-		PrintWriter out = response.getWriter();
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
 
-		String email = request.getParameter("email");
-		String password = request.getParameter("password");
+        // 1. Strict Input Validation
+        if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            request.setAttribute("error", "Email and password are required.");
+            request.getRequestDispatcher("UserLogin.jsp").forward(request, response);
+            return;
+        }
 
-		User user = null;
-		if (email != null && password != null) {
-			user = new UserDao().CheckUser(email.trim(), password);
-		}
+        // 2. Secure Authentication
+        UserAuthDao authDao = new UserAuthDao();
+        UserAuthDao.AuthResult authResult = authDao.authenticateUser(email.trim(), password);
 
-		boolean valid = user != null
-				&& user.getEmail() != null && !user.getEmail().isEmpty()
-				&& user.getPassword() != null && !user.getPassword().isEmpty();
+        if (authResult.success && authResult.user != null) {
+            // 3. Session Fixation Prevention: Obliterate old session
+            HttpSession oldSession = request.getSession(false);
+            if (oldSession != null) {
+                oldSession.invalidate();
+            }
+            
+            // 4. Generate new clean session
+            HttpSession newSession = request.getSession(true);
+            newSession.setMaxInactiveInterval(1800); // 30 mins
+            
+            // 5. Populate safe session attributes
+            newSession.setAttribute("name", authResult.user.getName());
+            newSession.setAttribute("vehicleno", authResult.user.getVehicle_no());
+            newSession.setAttribute("email", authResult.user.getEmail());
+            newSession.setAttribute("role", "USER");
 
-		if (valid) {
-			HttpSession ss = request.getSession(true);
-			ss.setAttribute("name", user.getName());
-			ss.setAttribute("vehicleno", user.getVehicle_no());
-			ss.setAttribute("email", user.getEmail());
+            // Success: Instantly load the dashboard without any alerts
+            response.sendRedirect("UserHome.jsp");
+        } else {
+            // Failure: Send the error message back to the login page safely
+            request.setAttribute("error", authResult.errorMessage);
+            request.getRequestDispatcher("UserLogin.jsp").forward(request, response);
+        }
+    }
 
-			out.println("<script type=\"text/javascript\">");
-			out.println("alert('Login Successfully');");
-			out.println("location='UserHome.jsp';");
-			out.println("</script>");
-		} else {
-			out.println("<script type=\"text/javascript\">");
-			out.println("alert('Invalid Login Details');");
-			out.println("location='UserLogin.jsp';");
-			out.println("</script>");
-		}
-	}
-
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		// Credentials should not travel in the URL, so GET just returns to the login page.
-		response.sendRedirect("UserLogin.jsp");
-	}
-
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect("UserLogin.jsp");
+    }
 }

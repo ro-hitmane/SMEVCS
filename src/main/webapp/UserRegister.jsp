@@ -105,7 +105,7 @@
 
 <body>
 
-<jsp:include page="nav_user.jsp" />
+<jsp:include page="nav_index.jsp" />
 
     </div>
   </header>

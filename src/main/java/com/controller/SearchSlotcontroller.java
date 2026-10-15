@@ -1,7 +1,7 @@
 package com.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -24,19 +24,18 @@ public class SearchSlotcontroller extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
-
 		String slotname = request.getParameter("slotname");
 		String address = request.getParameter("address");
 		String area = request.getParameter("area");
 		String city = request.getParameter("city");
 		String state = request.getParameter("state");
 
-		String sql = "insert into tbl_booking values(null,?,?,?,?,?)";
+		String sql = "INSERT INTO tbl_booking VALUES(null,?,?,?,?,?)";
 
-		Connection con = DBConnection.getConnection();
+		Connection con = null;
 		PreparedStatement ps = null;
 		try {
+			con = DBConnection.getConnection();
 			ps = con.prepareStatement(sql);
 			ps.setString(1, slotname);
 			ps.setString(2, address);
@@ -47,24 +46,21 @@ public class SearchSlotcontroller extends HttpServlet {
 			int index = ps.executeUpdate();
 
 			if (index > 0) {
-				out.println("<script type=\"text/javascript\">");
-				out.println("alert('Booking Confirmed');");
-				out.println("location='UserHome.jsp';");
-				out.println("</script>");
+				response.sendRedirect("UserHome.jsp?msg=" + URLEncoder.encode("Booking Confirmed", "UTF-8"));
 			} else {
-				out.println("<script type=\"text/javascript\">");
-				out.println("alert('Booking not confirmed');");
-				out.println("location='UserHome.jsp';");
-				out.println("</script>");
+				request.setAttribute("error", "Booking could not be confirmed.");
+				request.getRequestDispatcher("UserHome.jsp").forward(request, response);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			request.setAttribute("error", "Database error occurred while confirming booking.");
+			request.getRequestDispatcher("UserHome.jsp").forward(request, response);
 		} finally {
 			if (ps != null) {
-				try { ps.close(); } catch (SQLException e) {}
+				try { ps.close(); } catch (SQLException ignored) {}
 			}
 			if (con != null) {
-				try { con.close(); } catch (SQLException e) {}
+				try { con.close(); } catch (SQLException ignored) {}
 			}
 		}
 	}

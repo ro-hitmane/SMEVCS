@@ -1,8 +1,7 @@
 package com.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
+import java.net.URLEncoder;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,10 +16,6 @@ public class DeleteSlotController extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		response.setContentType("text/html; charset=UTF-8");
-		PrintWriter out = response.getWriter();
-
 		int slotId;
 		int stationId;
 		try {
@@ -31,16 +26,13 @@ public class DeleteSlotController extends HttpServlet {
 			return;
 		}
 
-		String back = "ManageStation.jsp?stationId=" + stationId;
+		String target = "ManageStation.jsp?stationId=" + stationId;
 
-		out.println("<script type=\"text/javascript\">");
 		if (new AdminDao().deleteSlot(slotId, stationId)) {
-			out.println("alert('Slot deleted successfully');");
+			response.sendRedirect(target + "&msg=" + URLEncoder.encode("Slot deleted successfully", "UTF-8"));
 		} else {
-			out.println("alert('Failed to delete slot');");
+			response.sendRedirect(target + "&error=" + URLEncoder.encode("Failed to delete slot", "UTF-8"));
 		}
-		out.println("location='" + back + "';");
-		out.println("</script>");
 	}
 
 	@Override

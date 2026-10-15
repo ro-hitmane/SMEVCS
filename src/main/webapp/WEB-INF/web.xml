@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://java.sun.com/xml/ns/javaee" 
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+         id="WebApp_ID" version="3.0">
+         
   <display-name>SMEVCS</display-name>
+
+  <!-- OWASP Session Security Configuration -->
+  <session-config>
+    <!-- Default session timeout in minutes (30 mins) -->
+    <session-timeout>30</session-timeout>
+    
+    <cookie-config>
+      <!-- Critical: Prevents JavaScript from reading the JSESSIONID cookie (Stops XSS session theft) -->
+      <http-only>true</http-only>
+      
+      <!-- IMPORTANT NOTE ON SECURE FLAG: -->
+      <!-- Only uncomment <secure>true</secure> below if your server is running on HTTPS (SSL/TLS). -->
+      <!-- If you are testing on http://localhost:8080, setting this to true will break logins! -->
+      <!-- <secure>true</secure> -->
+    </cookie-config>
+  </session-config>
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>
@@ -9,4 +30,5 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+  
 </web-app>
