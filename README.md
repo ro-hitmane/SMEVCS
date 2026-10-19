@@ -147,6 +147,9 @@ Choose **Option A** to clone the version-controlled repository directly, or **Op
 
 #### 🚀 Phase 4: Artifact Deployment & Execution
 
+
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/ro-hitmane/smevcs?utm_source=readme&utm_medium=badge)
+
 1. 🔄 **Deploy Project:** In the **Servers** panel, right-click **Tomcat v9.0** ➔ select **Add and Remove...**
 2. ➡️ **Add to Configured List:** Select `SMEVCS` under **Available** ➔ click **Add >** to move it to **Configured** ➔ click **Finish**.
 3. ▶️ **Launch Server:** Right-click the server node ➔ select **Start** (or launch via Debug mode).
