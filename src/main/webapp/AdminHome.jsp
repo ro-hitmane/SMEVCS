@@ -3,6 +3,10 @@
 <%
     // Prevent unauthenticated access
     String adminEmail = (String) session.getAttribute("admin");
+    if (adminEmail == null || adminEmail.trim().isEmpty()) {
+        response.sendRedirect("AdminLogin.jsp");
+        return;
+    }
 
     // Live Metrics Aggregation
     int totalStations = 0;

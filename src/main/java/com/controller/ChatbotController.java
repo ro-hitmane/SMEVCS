@@ -446,14 +446,8 @@ public class ChatbotController extends HttpServlet {
     }
 
     private String detectRole(HttpSession session, String currentPage) {
-        String p = currentPage != null ? currentPage.toLowerCase() : "";
-        if (p.contains("adminhome") || p.contains("stations") || p.contains("managestation") || p.contains("viewslots") || p.contains("stationbookings")) {
-            return "ADMIN";
-        }
+        // Role comes only from the server-side session, never from the client-supplied page name.
         if (session != null && session.getAttribute("admin") != null) return "ADMIN";
-        if (p.contains("userhome") || p.contains("search") || p.contains("searchslot") || p.contains("mybookings") || p.contains("payment")) {
-            return "USER";
-        }
         if (session != null && (session.getAttribute("email") != null || session.getAttribute("user") != null)) return "USER";
         return "GUEST";
     }

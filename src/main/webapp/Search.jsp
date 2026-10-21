@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, com.connection.DBConnection" %>
-<%
-    // Capture prefill parameters if user was redirected from preview mode
-    String prefillArea = request.getParameter("area");
-    String prefillVehicle = request.getParameter("vehicleType");
-    String prefillPort = request.getParameter("portType");
+<%!
+    private static String esc(String v) {
+        if (v == null) return "";
+        return v.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,8 +25,7 @@
   <!-- Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
-
-  <!-- Custom Enhanced Form Styling -->
+  
   <style>
   /* Blend the page background without altering layout heights */
   body, #main, section.contact {
@@ -134,16 +133,16 @@
 
 <body>
 
-  <!-- Navigation -->
+  <!-- navbar -->
   <jsp:include page="nav_user.jsp" />
 
-  <!-- Hero Section -->
+  <!-- ======= Hero Section ======= -->
   <section id="hero" style="padding: 60px 0 0 0;">
     <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
       <defs><path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></defs>
       <g class="wave1"><use xlink:href="#wave-path" x="50" y="3" fill="rgba(255,255,255, .1)"></g>
       <g class="wave2"><use xlink:href="#wave-path" x="50" y="0" fill="rgba(255,255,255, .2)"></g>
-      <g class="wave3"><use xlink:href="#wave-path" x="50" y="9" fill="#f8fafc"></g>
+      <g class="wave3"><use xlink:href="#wave-path" x="50" y="9" fill="#fff"></g>
     </svg>
   </section>
 
@@ -158,64 +157,34 @@
 
         <div class="row justify-content-center">
           <div class="col-lg-10">
-            
-            <% if (prefillArea != null && !prefillArea.trim().isEmpty()) { %>
-              <div class="alert alert-info border-0 shadow-sm py-3 px-4 mb-3 d-flex align-items-center rounded-4" style="background-color: #eff6ff; border: 1.5px solid #bfdbfe !important;">
-                <i class="bi bi-geo-alt-fill text-primary fs-4 me-3"></i>
-                <div>
-                  <strong class="text-dark">Station Pre-Selected</strong>
-                  <p class="mb-0 text-muted small">We prefilled your charging station and vehicle options from your preview selection. Choose duration and click <strong>Find Available Slots</strong>.</p>
-                </div>
-              </div>
-            <% } %>
-
             <div class="dashboard-card shadow">
               
               <!-- Booking Form -->
               <form action="SearchSlot.jsp" method="post" id="evBookingForm">
                 
-                <!-- Hidden input passing calculated amount to checkout -->
-                <input type="hidden" name="amount" id="hiddenAmount" value="0.00">
-                
                 <div class="row g-4 text-start">
                   
-                  <!-- Left Column: Charging Station & Hardware Requirements -->
+                  <!-- Left Column: Charging Requirements -->
                   <div class="col-md-6">
                     <div class="form-group mb-3">
-                      <label class="custom-label">Select Charging Station / Location <span class="text-danger">*</span></label>
-                      <select class="form-select custom-input" name="area" id="stationSelect" required>
-                        <option value="" disabled <%= (prefillArea == null || prefillArea.isEmpty()) ? "selected" : "" %>>Choose a verified charging station</option>
+                      <label class="custom-label">Select Station <span class="text-danger">*</span></label>
+                      <select class="form-select custom-input" name="stationId" required>
+                        <option value="" disabled selected>Select a charging station</option>
+                        <option value="all">All stations</option>
                         <%
                            Connection conStation = null;
                            PreparedStatement psStation = null;
                            ResultSet rsStation = null;
                            try {
                                conStation = DBConnection.getConnection();
-                               String query = "SELECT id, station_name, area, city FROM tbl_station " +
-                                              "ORDER BY CASE WHEN city = 'Pune' THEN 1 ELSE 2 END, station_name ASC";
+                               String query = "SELECT id, station_name, area, city FROM tbl_station ORDER BY station_name ASC";
                                psStation = conStation.prepareStatement(query);
                                rsStation = psStation.executeQuery();
-                               
-                               String currentCity = "";
-                               boolean hasGroup = false;
+
                                while(rsStation.next()) {
-                                   String stationName = rsStation.getString("station_name");
-                                   String areaName = rsStation.getString("area");
-                                   String cityName = rsStation.getString("city");
-                                   
-                                   if (!cityName.equalsIgnoreCase(currentCity)) {
-                                       if (hasGroup) {
-                                           out.println("</optgroup>");
-                                       }
-                                       currentCity = cityName;
-                                       hasGroup = true;
-                                       out.println("<optgroup label=\"── " + currentCity.toUpperCase() + " STATIONS ──\">");
-                                   }
-                                   boolean isSelected = (prefillArea != null && prefillArea.equalsIgnoreCase(areaName));
-                                   out.println("<option value=\"" + areaName + "\"" + (isSelected ? " selected" : "") + ">" + stationName + " &mdash; " + areaName + "</option>");
-                               }
-                               if (hasGroup) {
-                                   out.println("</optgroup>");
+                        %>
+                                   <option value="<%= rsStation.getInt("id") %>"><%= esc(rsStation.getString("station_name")) %> - <%= esc(rsStation.getString("area")) %>, <%= esc(rsStation.getString("city")) %></option>
+                        <%
                                }
                            } catch (Exception e) {
                                e.printStackTrace();
@@ -231,19 +200,19 @@
                     <div class="form-group mb-3">
                       <label class="custom-label">Vehicle Type <span class="text-danger">*</span></label>
                       <select class="form-select custom-input" name="vehicleType" id="vehicleType" onchange="calculatePrice()" required>
-                        <option value="" disabled <%= (prefillVehicle == null || prefillVehicle.isEmpty()) ? "selected" : "" %>>Select EV Model / Type</option>
-                        <option value="2-Wheeler" <%= "2-Wheeler".equalsIgnoreCase(prefillVehicle) ? "selected" : "" %>>2-Wheeler (Standard)</option>
-                        <option value="4-Wheeler-Normal" <%= "4-Wheeler-Normal".equalsIgnoreCase(prefillVehicle) ? "selected" : "" %>>4-Wheeler (Normal AC)</option>
-                        <option value="4-Wheeler-Fast" <%= "4-Wheeler-Fast".equalsIgnoreCase(prefillVehicle) ? "selected" : "" %>>4-Wheeler (Fast DC)</option>
+                        <option value="" disabled>Select EV Model / Type</option>
+                        <option value="2-Wheeler">2-Wheeler (Standard)</option>
+                        <option value="4-Wheeler-Normal">4-Wheeler (Normal AC)</option>
+                        <option value="4-Wheeler-Fast" selected>4-Wheeler (Fast DC)</option>
                       </select>
                     </div>
 
                     <div class="form-group mb-3">
                       <label class="custom-label">Charging Port Type <span class="text-danger">*</span></label>
                       <select class="form-select custom-input" name="portType" id="portType" onchange="calculatePrice()">
-                        <option value="CCS2" <%= "CCS2".equalsIgnoreCase(prefillPort) ? "selected" : "" %>>Type 2 / CCS2</option>
-                        <option value="CHAdeMO" <%= "CHAdeMO".equalsIgnoreCase(prefillPort) ? "selected" : "" %>>CHAdeMO</option>
-                        <option value="GB/T" <%= "GB/T".equalsIgnoreCase(prefillPort) ? "selected" : "" %>>GB/T</option>
+                        <option value="CCS2">Type 2 / CCS2</option>
+                        <option value="CHAdeMO">CHAdeMO</option>
+                        <option value="GB/T">GB/T</option>
                       </select>
                     </div>
 
@@ -257,11 +226,11 @@
                     </div>
                   </div>
 
-                  <!-- Right Column: User & Pricing Engine -->
+                  <!-- Right Column: User & Billing Info -->
                   <div class="col-md-6">
                     <div class="form-group mb-3">
                       <label class="custom-label">Email Address <span class="text-danger">*</span></label>
-                      <input type="email" class="form-control custom-input" name="email" placeholder="name@example.com" required>
+                      <input type="email" class="form-control custom-input" name="email" value="<%= esc((String) session.getAttribute("email")) %>" readonly>
                     </div>
 
                     <div class="form-group mb-3">
@@ -283,26 +252,26 @@
                       <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="text-muted small">Total Bays Needed</span>
                         <div class="d-flex align-items-center">
-                          <button type="button" class="btn btn-sm btn-outline-secondary btn-slot-step py-0 px-2" onclick="changeSlots(-1)">-</button>
-                          <span id="slotCount" class="mx-2 fw-bold text-dark">1</span>
-                          <button type="button" class="btn btn-sm btn-outline-secondary btn-slot-step py-0 px-2" onclick="changeSlots(1)">+</button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="changeSlots(-1)">-</button>
+                          <span id="slotCount" class="mx-2 fw-bold">1</span>
+                          <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="changeSlots(1)">+</button>
                         </div>
                       </div>
 
                       <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="text-muted small">Base Rate</span>
-                        <span class="fw-semibold text-dark" id="baseRateDisplay">₹0.00 / hr</span>
+                        <span class="fw-semibold" id="baseRateDisplay">₹0.00 / hr</span>
                       </div>
                       <hr class="my-2">
                       <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="fw-semibold text-secondary">Subtotal</span>
+                        <span class="fw-semibold">Subtotal</span>
                         <span class="fw-bold text-dark" id="subtotalDisplay">₹0.00</span>
                       </div>
                       <div class="d-flex justify-content-between align-items-center mb-1">
                         <span class="text-muted small">GST (18%)</span>
                         <span class="fw-semibold text-muted" id="gstDisplay">₹0.00</span>
                       </div>
-                      <div class="d-flex justify-content-between align-items-center mt-2 pt-1 border-top">
+                      <div class="d-flex justify-content-between align-items-center mt-2">
                         <span class="fw-bold text-dark">Final Payable</span>
                         <span class="fw-bold text-success fs-5" id="finalPayableDisplay">₹0.00</span>
                       </div>
@@ -322,14 +291,14 @@
     </section>
   </main>
 
-  <!-- Footer -->
   <jsp:include page="footer_user.jsp" />
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  
   <script src="assets/js/main.js"></script>
 
-  <!-- Dynamic Pricing Engine Script -->
+  <!-- Dynamic Pricing Engine -->
   <script>
     let slots = 1;
 
@@ -339,39 +308,34 @@
       calculatePrice();
     }
 
+    // The estimate comes from the server (PriceQuote), so the rates are defined in one place only.
     function calculatePrice() {
-      const vehicleSelect = document.getElementById('vehicleType');
-      const vehicle = vehicleSelect ? vehicleSelect.value : '';
-      const durationMins = parseInt(document.getElementById('durationSelect').value) || 0;
-      const port = document.getElementById('portType').value;
+      const params = new URLSearchParams({
+        vehicleType: document.getElementById('vehicleType').value,
+        portType: document.getElementById('portType').value,
+        duration: document.getElementById('durationSelect').value,
+        quantity: slots
+      });
 
-      let baseHourlyRate = 0;
-      if (vehicle === '2-Wheeler') {
-        baseHourlyRate = 25.00;
-      } else if (vehicle === '4-Wheeler-Normal') {
-        baseHourlyRate = 75.00;
-      } else if (vehicle === '4-Wheeler-Fast') {
-        baseHourlyRate = 200.00;
-      }
-
-      if (port === 'GB/T' && baseHourlyRate > 0) {
-        baseHourlyRate = baseHourlyRate * 0.90;
-      }
-
-      const durationHours = durationMins / 60;
-      const subtotal = baseHourlyRate * durationHours * slots;
-      const gst = subtotal * 0.18;
-      const finalTotal = subtotal + gst;
-
-      document.getElementById('baseRateDisplay').innerText = "₹" + baseHourlyRate.toFixed(2) + " / hr";
-      document.getElementById('subtotalDisplay').innerText = "₹" + subtotal.toFixed(2);
-      document.getElementById('gstDisplay').innerText = "₹" + gst.toFixed(2);
-      document.getElementById('finalPayableDisplay').innerText = "₹" + finalTotal.toFixed(2);
-      
-      document.getElementById('visualAmount').value = finalTotal.toFixed(2);
-      document.getElementById('hiddenAmount').value = finalTotal.toFixed(2);
+      fetch('PriceQuote?' + params.toString())
+        .then(function (res) { return res.ok ? res.json() : Promise.reject(); })
+        .then(function (q) {
+          document.getElementById('baseRateDisplay').innerText = "\u20B9" + q.hourlyRate + " / hr";
+          document.getElementById('subtotalDisplay').innerText = "\u20B9" + q.subtotal;
+          document.getElementById('gstDisplay').innerText = "\u20B9" + q.gst;
+          document.getElementById('finalPayableDisplay').innerText = "\u20B9" + q.total;
+          document.getElementById('visualAmount').value = q.total;
+        })
+        .catch(function () {
+          document.getElementById('baseRateDisplay').innerText = "--";
+          document.getElementById('subtotalDisplay').innerText = "--";
+          document.getElementById('gstDisplay').innerText = "--";
+          document.getElementById('finalPayableDisplay').innerText = "--";
+          document.getElementById('visualAmount').value = "";
+        });
     }
 
+    // Initialize pricing on page load
     document.addEventListener("DOMContentLoaded", function() {
       calculatePrice();
     });

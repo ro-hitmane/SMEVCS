@@ -23,3 +23,6 @@ build/
 .classpath
 .project
 
+
+# Local database credentials (copy src/main/java/db.properties.example to db.properties)
+src/main/java/db.properties

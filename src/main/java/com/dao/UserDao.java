@@ -13,7 +13,8 @@ public class UserDao {
 
 	public boolean InsertUserData(User userbean) {
 
-		String sql = "insert into tbl_user values(null,?,?,?,?, ?,?,?,?)";
+		String sql = "insert into tbl_user(name, address, mobile_no, email, password, vehicle_no, vehicle_name, vehicle_owner_name) "
+				+ "values(?,?,?,?,?,?,?,?)";
 		boolean flag = false;
 
 		try (Connection con = DBConnection.getConnection()) {
@@ -38,34 +39,34 @@ public class UserDao {
 		return flag;
 	}
 
-	public boolean InsertPayData(Pay pay) {
-
-		String sql = "insert into tbl_payment(ownername, number, bat, amt, pay_mode, email, slot_id, start_time, end_time) "
-				+ "values(?,?,?,?,?,?,?,?,?)";
-		boolean flag = false;
-
-		try (Connection con = DBConnection.getConnection()) {
-			if (con == null) {
-				return false;
-			}
-			try (PreparedStatement ps = con.prepareStatement(sql)) {
-				ps.setString(1, pay.getOwnername());
-				ps.setString(2, pay.getNo());
-				ps.setString(3, pay.getBat());
-				ps.setString(4, pay.getAmt());
-				ps.setString(5, pay.getPayMode());
-				ps.setString(6, pay.getEmail());
-				ps.setInt(7, pay.getSlotId());
-				ps.setTimestamp(8, pay.getStartTime());
-				ps.setTimestamp(9, pay.getEndTime());
-
-				flag = ps.executeUpdate() > 0;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return flag;
-	}
+//	public boolean InsertPayData(Pay pay) {
+//
+//		String sql = "insert into tbl_payment(ownername, number, bat, amt, pay_mode, email, slot_id, start_time, end_time) "
+//				+ "values(?,?,?,?,?,?,?,?,?)";
+//		boolean flag = false;
+//
+//		try (Connection con = DBConnection.getConnection()) {
+//			if (con == null) {
+//				return false;
+//			}
+//			try (PreparedStatement ps = con.prepareStatement(sql)) {
+//				ps.setString(1, pay.getOwnername());
+//				ps.setString(2, pay.getNo());
+//				ps.setString(3, pay.getBat());
+//				ps.setString(4, pay.getAmt());
+//				ps.setString(5, pay.getPayMode());
+//				ps.setString(6, pay.getEmail());
+//				ps.setInt(7, pay.getSlotId());
+//				ps.setTimestamp(8, pay.getStartTime());
+//				ps.setTimestamp(9, pay.getEndTime());
+//
+//				flag = ps.executeUpdate() > 0;
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		return flag;
+//	}
 
 	public boolean alreadyUser(String email) throws SQLException {
 

@@ -2,13 +2,8 @@
 <%@ page import="java.sql.*, com.connection.DBConnection" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%
+    // The email comes only from the logged-in session, never from the URL or a form.
     String userEmail = (String) session.getAttribute("email");
-    if (userEmail == null || userEmail.trim().isEmpty()) {
-        userEmail = request.getParameter("email");
-        if (userEmail != null && !userEmail.trim().isEmpty()) {
-            session.setAttribute("email", userEmail.trim());
-        }
-    }
 %>
 <!DOCTYPE html>
 <html lang="en">

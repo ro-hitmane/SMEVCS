@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -141,11 +143,21 @@
                 <p>Log in to find charging slots and manage your bookings.</p>
               </div>
 
-              <% if (request.getAttribute("error") != null) { %>
-                <div class="alert alert-danger text-center" role="alert" style="font-size: 14px; border-radius: 8px;">
-                  <%= request.getAttribute("error") %>
-                </div>
-              <% } %>
+             <%
+  String flash = (String) session.getAttribute("flashSuccess");
+  if (flash != null) {
+      session.removeAttribute("flashSuccess");
+%>
+  <div class="alert alert-success text-center" role="alert" style="font-size: 14px; border-radius: 8px;">
+    <i class="bi bi-check-circle"></i> <%= flash %>
+  </div>
+<% } %>
+
+<% if (request.getAttribute("error") != null) { %>
+  <div class="alert alert-danger text-center" role="alert" style="font-size: 14px; border-radius: 8px;">
+    <%= request.getAttribute("error") %>
+  </div>
+<% } %>
 
               <div class="form-group">
                 <label for="email">Email</label>
@@ -187,7 +199,7 @@
   <footer id="footer">
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>Charge it 2021</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
     </div>
   </footer>

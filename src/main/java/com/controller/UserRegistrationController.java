@@ -69,10 +69,11 @@ public class UserRegistrationController extends HttpServlet {
 			bean.setVehicle_owner_name(vehicle_owner_name);
 
 			if (dao.InsertUserData(bean)) {
-				response.sendRedirect("UserLogin.jsp?msg=" + URLEncoder.encode("Registration successful! Please log in.", "UTF-8"));
+			    request.getSession().setAttribute("flashSuccess", "Registration successful! Please log in.");
+			    response.sendRedirect("UserLogin.jsp");
 			} else {
-				request.setAttribute("error", "Registration failed. Please check your inputs and try again.");
-				request.getRequestDispatcher("UserRegister.jsp").forward(request, response);
+			    request.setAttribute("error", "Registration failed. Please check your inputs and try again.");
+			    request.getRequestDispatcher("UserRegister.jsp").forward(request, response);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

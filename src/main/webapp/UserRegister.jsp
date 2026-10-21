@@ -107,9 +107,6 @@
 
 <jsp:include page="nav_index.jsp" />
 
-    </div>
-  </header>
-  <!-- End Header -->
 
   <!-- ======= Hero Section ======= -->
   <section id="hero">
@@ -156,6 +153,10 @@
                 <h3>Create your account</h3>
                 <p>Register to search charging slots, book them and pay online.</p>
               </div>
+              <% String error = (String) request.getAttribute("error");
+   if (error != null) { %>
+  <div class="alert alert-danger" role="alert"><%= error %></div>
+<% } %>
 
               <div class="form-group ">
                 <label for="name">Name</label>
@@ -253,7 +254,7 @@
 
     <div class="container">
       <div class="copyright">
-        &copy; Copyright <strong><span>Charge it 2021</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>Plugy</span></strong>. All Rights Reserved
       </div>
       
     </div>

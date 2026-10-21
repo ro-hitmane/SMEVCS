@@ -41,7 +41,7 @@
   
   HttpSession ss=request.getSession();
   String name=null;
-   name=(String) ss.getAttribute(name);
+   name=(String) ss.getAttribute("name");
   
   System.out.println("Welcome user:"+name);
   %>
